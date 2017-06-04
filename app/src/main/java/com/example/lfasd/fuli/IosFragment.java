@@ -13,7 +13,7 @@ import android.view.ViewGroup;
  * Created by LFasd on 2017/6/3.
  */
 
-public class IosFragment extends MyFragment {
+public class IosFragment extends BaseFragment {
 
     public static final String IOS_URL = "http://gank.io/api/data/iOS/20/";
 

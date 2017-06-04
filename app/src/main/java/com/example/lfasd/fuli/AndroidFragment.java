@@ -13,7 +13,7 @@ import android.view.ViewGroup;
  * Created by LFasd on 2017/6/3.
  */
 
-public class AndroidFragment extends MyFragment {
+public class AndroidFragment extends BaseFragment {
 
     public static final String ANDROID_URL = "http://gank.io/api/data/Android/10/";
 

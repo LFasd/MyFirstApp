@@ -20,6 +20,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,12 +30,12 @@ public class MainActivity extends AppCompatActivity {
 
     private FragmentManager fm = getSupportFragmentManager();
 
-    private MyFragment isshow;
+    private BaseFragment isshow;
     private FloatingActionButton backToTop;
 
-    private MyFragment mFuliFragment;
-    private MyFragment mAndroidFragment;
-    private MyFragment mIosFragment;
+    private BaseFragment mFuliFragment;
+    private BaseFragment mAndroidFragment;
+    private BaseFragment mIosFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         mFuliFragment = new FuliFragment(backToTop);
+        bar.setTitle("福利");
         init(mFuliFragment);
 
         mNavigationView.setCheckedItem(R.id.fuli);
@@ -68,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+//                Glide.clear(isshow.getRecyclerView());
 
                 switch (item.getItemId()) {
                     case R.id.fuli:
@@ -133,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private void switchFragment(MyFragment from, MyFragment to) {
+    private void switchFragment(BaseFragment from, BaseFragment to) {
         if (isshow != to) {
             isshow = to;
             FragmentTransaction transaction = fm.beginTransaction();
@@ -147,7 +152,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void init(MyFragment fragment) {
+    private void init(BaseFragment fragment) {
+        backToTop.hide();
         FragmentTransaction transaction = fm.beginTransaction();
         transaction.add(R.id.fragment, fragment).show(fragment).commit();
         isshow = fragment;

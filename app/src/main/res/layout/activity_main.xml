@@ -38,6 +38,7 @@
             android:layout_gravity="right|bottom"
             android:layout_marginBottom="56dp"
             android:layout_marginRight="16dp"
+            android:backgroundTint="@color/colorAccent"
             android:src="@mipmap/ic_action_arrow_top"/>
 
     </android.support.design.widget.CoordinatorLayout>

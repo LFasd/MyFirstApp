@@ -14,7 +14,7 @@ import android.view.ViewGroup;
  * Created by LFasd on 2017/6/3.
  */
 
-public class FuliFragment extends MyFragment {
+public class FuliFragment extends BaseFragment {
 
     public static final String FULI_URL = "http://gank.io/api/data/福利/10/";
 
