@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:icon="@mipmap/ic_action_heart"
+            android:id="@+id/fuli"
+            android:title="@string/fuli"/>
+        <item
+            android:icon="@mipmap/ic_action_android"
+            android:id="@+id/android"
+            android:title="@string/android"/>
+        <item
+            android:id="@+id/ios"
+            android:title="@string/ios"/>
+    </group>
+</menu>
