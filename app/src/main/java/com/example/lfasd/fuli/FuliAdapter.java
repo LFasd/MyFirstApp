@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,19 +67,23 @@ public class FuliAdapter extends RecyclerView.Adapter<FuliAdapter.MyHolder> {
         holder.mCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Log.d("点击", "fuli");
                 final int position = holder.getAdapterPosition();
 
                 final View girl = View.inflate(mContext, R.layout.girl, null);
                 final ImageView imageView = (ImageView) girl.findViewById(R.id.girl);
 
-                Glide.with(mContext).load(mResults.get(position).getUrl()).asBitmap().into(new SimpleTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                        imageView.setImageBitmap(resource);
-                        showDialog(position, girl, resource);
-                    }
-                });
-
+                Glide.with(mContext)
+                        .load(mResults.get(position).getUrl())
+                        .asBitmap()
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                                imageView.setImageBitmap(resource);
+                                showDialog(position, girl, resource);
+                            }
+                        });
             }
         });
 
@@ -89,7 +94,8 @@ public class FuliAdapter extends RecyclerView.Adapter<FuliAdapter.MyHolder> {
     public void onBindViewHolder(final MyHolder holder, int position) {
         holder.mTextView.setText(mResults.get(position).getWho());
         //使用 Glide 直接加载 url 对应的图片到 ImageView
-        Glide.with(mContext).load(mResults.get(position).getUrl()).into(holder.mImageView);
+        Glide.with(mContext).load(mResults.get(position).getUrl())
+                .into(holder.mImageView);
     }
 
     @Override
@@ -142,7 +148,6 @@ public class FuliAdapter extends RecyclerView.Adapter<FuliAdapter.MyHolder> {
         } else {
             Toast.makeText(mContext, "无法使用外部储存器", Toast.LENGTH_SHORT).show();
         }
-
 
     }
 

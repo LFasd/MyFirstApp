@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,16 +19,16 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.List;
 
 /**
- * Created by LFasd on 2017/6/3.
+ * Created by LFasd on 2017/6/5.
  */
 
-public class IosAdapter extends RecyclerView.Adapter<IosAdapter.MyHolder> {
+public class AllAdapter extends RecyclerView.Adapter<AllAdapter.MyHolder> {
 
-    private Context mContext;
     private List<Result> mResults;
+    private Context mContext;
+    private MyHolder holder;
 
     class MyHolder extends RecyclerView.ViewHolder {
-
         RelativeLayout view;
         TextView mTitle;
         TextView mAuthor;
@@ -46,25 +45,25 @@ public class IosAdapter extends RecyclerView.Adapter<IosAdapter.MyHolder> {
         }
     }
 
-    public IosAdapter(List<Result> results) {
+    AllAdapter(List<Result> results) {
         mResults = results;
     }
 
     @Override
-    public IosAdapter.MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (mContext == null) {
             mContext = parent.getContext();
         }
 
         View view = LayoutInflater.from(mContext).inflate(R.layout.base_item, parent, false);
-        final MyHolder holder = new MyHolder(view);
+
+        holder = new MyHolder(view);
 
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int position = holder.getAdapterPosition();
 
-                //使用浏览器打开url
                 Intent intent = new Intent();
                 intent.setAction("android.intent.action.VIEW");
                 intent.setData(Uri.parse(mResults.get(position).getUrl()));
@@ -76,16 +75,17 @@ public class IosAdapter extends RecyclerView.Adapter<IosAdapter.MyHolder> {
     }
 
     @Override
-    public void onBindViewHolder(IosAdapter.MyHolder holder, int position) {
-
+    public void onBindViewHolder(MyHolder holder, int position) {
         Result result = mResults.get(position);
 
         //设置标题
         holder.mTitle.setText(result.getDesc());
 
+        //当有一个item从RecyclerView的上面划出后，就停止加载那个item的图片
         Glide.clear(holder.mImageView);
-        //设置图标
+
         String[] image = result.getImages();
+        //如果有图标，就使用Glide加载图片
         if (image != null && image.length > 0) {
             Glide.with(mContext)
                     .load(image[0])
@@ -94,12 +94,13 @@ public class IosAdapter extends RecyclerView.Adapter<IosAdapter.MyHolder> {
                     .thumbnail(0.2f)
                     .into(holder.mImageView);
         } else {
+            //如果没有图片，就是用默认的安卓机器人作为图标
             Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources()
                     , R.mipmap.ic_action_android);
             holder.mImageView.setImageBitmap(bitmap);
         }
 
-        //设置作者名
+        //设置作者
         if (result.getWho() != null) {
             holder.mAuthor.setText(result.getWho());
         } else {

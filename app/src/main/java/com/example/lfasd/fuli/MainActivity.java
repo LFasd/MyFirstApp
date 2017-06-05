@@ -16,14 +16,17 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-
 
 public class MainActivity extends AppCompatActivity {
+
+    public static final int WRITE_EXTERNAL_STORAGE = 0;
+
+    public static final long EXITING_TIME = 3000;
 
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
@@ -33,9 +36,11 @@ public class MainActivity extends AppCompatActivity {
     private BaseFragment isshow;
     private FloatingActionButton backToTop;
 
-    private BaseFragment mFuliFragment;
-    private BaseFragment mAndroidFragment;
-    private BaseFragment mIosFragment;
+    private FuliFragment mFuliFragment;
+    private AndroidFragment mAndroidFragment;
+    private IosFragment mIosFragment;
+
+    private boolean isexiting = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,10 +77,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-//                Glide.clear(isshow.getRecyclerView());
-
                 switch (item.getItemId()) {
                     case R.id.fuli:
+
                         switchFragment(isshow, mFuliFragment);
                         bar.setTitle("福利");
                         break;
@@ -109,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
                 , Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions((Activity) context
-                    , new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                    , new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE);
             return false;
         }
         return true;
@@ -119,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
-            case 1:
+            case WRITE_EXTERNAL_STORAGE:
                 //如果用户没有给予权限，就重复申请
                 if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "请给予必要权限", Toast.LENGTH_SHORT).show();
@@ -152,10 +156,55 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 初始化界面，内容是一个Fragment
+     *
+     * @param fragment 需要一开始显示的页面
+     */
     private void init(BaseFragment fragment) {
         backToTop.hide();
         FragmentTransaction transaction = fm.beginTransaction();
         transaction.add(R.id.fragment, fragment).show(fragment).commit();
         isshow = fragment;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                //如果DrawerLayout已经打开，就把DrawerLayout关闭
+                if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    mDrawerLayout.closeDrawers();
+                } else {//否则判断是否要关闭程序
+                    if (isexiting) {
+                        finish();
+                    } else {
+                        isexiting = true;
+                    }
+                    Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Thread.sleep(EXITING_TIME);
+                                isexiting = false;
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
+                }
+                break;
+            case KeyEvent.KEYCODE_MENU:
+                //如果DrawerLayout已经打开，关闭DrawerLayout
+                if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    mDrawerLayout.closeDrawers();
+                } else {//否则打开DrawerLayout
+                    mDrawerLayout.openDrawer(GravityCompat.START);
+                }
+        }
+
+        return true;
     }
 }

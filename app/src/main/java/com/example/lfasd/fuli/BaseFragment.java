@@ -51,9 +51,9 @@ public class BaseFragment extends Fragment {
         if (this instanceof FuliFragment) {
             mAdapter = new FuliAdapter(mResults);
         } else if (this instanceof AndroidFragment) {
-            mAdapter = new AndroidAdapter(mResults);
+            mAdapter = new AllAdapter(mResults);
         } else if (this instanceof IosFragment) {
-            mAdapter = new IosAdapter(mResults);
+            mAdapter = new AllAdapter(mResults);
         }
     }
 
