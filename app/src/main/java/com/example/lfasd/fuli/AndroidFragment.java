@@ -15,24 +15,19 @@ import android.view.ViewGroup;
 
 public class AndroidFragment extends BaseFragment {
 
-    public static final String ANDROID_URL = "http://gank.io/api/data/Android/10/";
+    public static final String URL = "http://gank.io/api/data/Android/10/";
 
     public AndroidFragment(FloatingActionButton button) {
-        super(ANDROID_URL);
-        backToTop = button;
+        super(URL);
+        setBackToTop(button);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment, container, false);
+        View view = super.onCreateView(inflater, container, savedInstanceState);
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.list);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(getAdapter());
-        recyclerView.addOnScrollListener(getListener());
-
-        load(ANDROID_URL + page);
+        load(URL + getPage());
 
         return view;
     }

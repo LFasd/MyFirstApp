@@ -39,6 +39,11 @@ public class MainActivity extends AppCompatActivity {
     private FuliFragment mFuliFragment;
     private AndroidFragment mAndroidFragment;
     private IosFragment mIosFragment;
+    private ExpandFragment mExpandFragment;
+    private RelaxFragment mRelaxFragment;
+    private AppFragment mAppFragment;
+    private ForeFragment mForeFragment;
+    private OtherFragment mOtherFragment;
 
     private boolean isexiting = false;
 
@@ -79,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (item.getItemId()) {
                     case R.id.fuli:
-
                         switchFragment(isshow, mFuliFragment);
                         bar.setTitle("福利");
                         break;
@@ -96,6 +100,41 @@ public class MainActivity extends AppCompatActivity {
                         }
                         switchFragment(isshow, mIosFragment);
                         bar.setTitle("ios");
+                        break;
+                    case R.id.relax:
+                        if (mRelaxFragment == null) {
+                            mRelaxFragment = new RelaxFragment(backToTop);
+                        }
+                        switchFragment(isshow, mRelaxFragment);
+                        bar.setTitle("休息视频");
+                        break;
+                    case R.id.app:
+                        if (mAppFragment == null) {
+                            mAppFragment = new AppFragment(backToTop);
+                        }
+                        switchFragment(isshow, mAppFragment);
+                        bar.setTitle("App");
+                        break;
+                    case R.id.expand:
+                        if (mExpandFragment == null) {
+                            mExpandFragment = new ExpandFragment(backToTop);
+                        }
+                        switchFragment(isshow, mExpandFragment);
+                        bar.setTitle("拓展资源");
+                        break;
+                    case R.id.other:
+                        if (mOtherFragment == null) {
+                            mOtherFragment = new OtherFragment(backToTop);
+                        }
+                        switchFragment(isshow, mOtherFragment);
+                        bar.setTitle("瞎推荐");
+                        break;
+                    case R.id.fore:
+                        if (mForeFragment == null) {
+                            mForeFragment = new ForeFragment(backToTop);
+                        }
+                        switchFragment(isshow, mForeFragment);
+                        bar.setTitle("前端");
                         break;
                 }
                 mDrawerLayout.closeDrawers();

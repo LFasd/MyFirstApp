@@ -3,28 +3,26 @@ package com.example.lfasd.fuli;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * Created by LFasd on 2017/6/3.
+ * Created by LFasd on 2017/6/5.
  */
 
-public class IosFragment extends BaseFragment {
+public class OtherFragment extends BaseFragment {
 
-    public static final String URL = "http://gank.io/api/data/iOS/20/";
+    public static final String URL = "http://gank.io/api/data/瞎推荐/10/";
 
-    public IosFragment(FloatingActionButton button) {
+    protected OtherFragment(FloatingActionButton button) {
         super(URL);
         setBackToTop(button);
     }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
         load(URL + getPage());

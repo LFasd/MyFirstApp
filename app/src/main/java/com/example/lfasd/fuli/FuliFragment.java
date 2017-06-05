@@ -16,25 +16,24 @@ import android.view.ViewGroup;
 
 public class FuliFragment extends BaseFragment {
 
-    public static final String FULI_URL = "http://gank.io/api/data/福利/10/";
+    public static final String URL = "http://gank.io/api/data/福利/10/";
 
     public FuliFragment(FloatingActionButton button) {
-        super(FULI_URL);
-        backToTop = button;
+        super(URL);
+        setBackToTop(button);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment, container, false);
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.list);
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         recyclerView.setAdapter(getAdapter());
         recyclerView.addOnScrollListener(getListener());
 
-        load(FULI_URL + page);
+        load(URL + getPage());
 
         return view;
     }

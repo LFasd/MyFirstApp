@@ -1,12 +1,18 @@
 package com.example.lfasd.fuli;
 
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -33,28 +39,39 @@ public class BaseFragment extends Fragment {
 
     protected boolean isScrolling = false;
 
-    protected int page = 1;
+    private int page = 1;
 
-    protected List<Result> mResults = new ArrayList<>();
+    private List<Result> mResults = new ArrayList<>();
 
-    protected FloatingActionButton backToTop;
+    private FloatingActionButton backToTop;
 
-    protected String url;
+    private String url;
 
     private RecyclerView.Adapter mAdapter;
 
-    protected RecyclerView recyclerView;
+    private RecyclerView recyclerView;
 
-    public BaseFragment(String url) {
+    protected BaseFragment(String url) {
         this.url = url;
 
         if (this instanceof FuliFragment) {
             mAdapter = new FuliAdapter(mResults);
-        } else if (this instanceof AndroidFragment) {
-            mAdapter = new AllAdapter(mResults);
-        } else if (this instanceof IosFragment) {
+        } else {
             mAdapter = new AllAdapter(mResults);
         }
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment, container, false);
+
+        recyclerView = (RecyclerView) view.findViewById(R.id.list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setAdapter(getAdapter());
+        recyclerView.addOnScrollListener(getListener());
+
+        return view;
     }
 
     protected void load(final String url) {
@@ -125,7 +142,7 @@ public class BaseFragment extends Fragment {
         }
     };
 
-    protected Handler mHandler = new Handler() {
+    private Handler mHandler = new Handler() {
 
         @Override
         public void handleMessage(Message msg) {
@@ -157,5 +174,13 @@ public class BaseFragment extends Fragment {
 
     public RecyclerView getRecyclerView() {
         return recyclerView;
+    }
+
+    protected void setBackToTop(FloatingActionButton backToTop) {
+        this.backToTop = backToTop;
+    }
+
+    protected int getPage() {
+        return page;
     }
 }
