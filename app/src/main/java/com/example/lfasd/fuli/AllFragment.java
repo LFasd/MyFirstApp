@@ -15,7 +15,7 @@ public class AllFragment extends BaseFragment {
 
     private String url;
 
-    protected AllFragment(String url, FloatingActionButton button) {
+    public AllFragment(String url, FloatingActionButton button) {
         super(url);
         this.url = url;
         setBackToTop(button);

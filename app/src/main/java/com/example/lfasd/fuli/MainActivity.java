@@ -24,8 +24,14 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
+    /**
+     * 申请写入外部存储器权限的标识
+     */
     public static final int WRITE_EXTERNAL_STORAGE = 0;
 
+    /**
+     * 在这么多时间间隔内连续按两下返回键就能退出应用程序
+     */
     public static final long EXITING_TIME = 2500;
 
     public static final String ANDROID_URL = "http://gank.io/api/data/Android/10/";
@@ -45,9 +51,19 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
 
+    /**
+     * 控制Fragment切换的FragmentManager
+     */
     private FragmentManager fm = getSupportFragmentManager();
 
+    /**
+     * 记录当前显示的是哪个Fragment
+     */
     private BaseFragment isshow;
+
+    /**
+     * 用于回滚到正在显示的Fragment中RecyclerView的顶部的浮动按钮
+     */
     private FloatingActionButton backToTop;
 
     private FuliFragment mFuliFragment;
@@ -59,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
     private AllFragment mForeFragment;
     private AllFragment mOtherFragment;
 
+    /**
+     * 记录退出应用程序时间
+     */
     private long time;
 
     @Override
@@ -78,9 +97,11 @@ public class MainActivity extends AppCompatActivity {
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
         backToTop = (FloatingActionButton) findViewById(R.id.back_to_top);
 
+
         backToTop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //回滚到当前Fragment中RecyclerView的顶部
                 isshow.getRecyclerView().smoothScrollToPosition(0);
             }
         });
@@ -195,14 +216,22 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * 切换正在显示的Fragment
+     *
+     * @param from 现在正在显示的Fragment
+     * @param to   需要显示的Fragment
+     */
     private void switchFragment(BaseFragment from, BaseFragment to) {
         if (isshow != to) {
             isshow = to;
             FragmentTransaction transaction = fm.beginTransaction();
 
+            //如果需要显示的Fragment已经在FragmentManager中了，直接显示出来
             if (to.isAdded()) {
                 transaction.hide(from).show(to).commit();
             } else {
+                //如果要显示的Fragment不在FragmentManager中，把它添加到FragmentManager中
                 transaction.hide(from).add(R.id.fragment, to).commit();
             }
 
@@ -212,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * 初始化界面，内容是一个Fragment
      *
-     * @param fragment 需要一开始显示的页面
+     * @param fragment 需要一开始显示的Fragment
      */
     private void init(BaseFragment fragment) {
         backToTop.hide();

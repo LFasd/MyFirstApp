@@ -27,6 +27,9 @@ import okhttp3.Response;
  * Created by LFasd on 2017/6/4.
  */
 
+/**
+ *
+ */
 public class BaseFragment extends Fragment {
 
     public static final int DATA_SET_CHANGED = 0;
@@ -35,28 +38,54 @@ public class BaseFragment extends Fragment {
 
     public static final int BUTTON_STATE_CHANGED = 2;
 
+    /**
+     * 停止滚动后FloatingActionButton需要过多少毫秒后消失
+     */
     public static final long BUTTON_WAIT = 800;
 
-    protected boolean isScrolling = false;
+    /**
+     * Fragment中的RecyclerView是否正在滚动
+     */
+    private boolean isScrolling = false;
 
+    /**
+     * 现在已经加载过的url资源数
+     */
     private int page = 1;
 
+    /**
+     * 对应RecyclerView中每个Item的数据模型
+     */
     private List<Result> mResults = new ArrayList<>();
 
+    /**
+     * 回滚到RecyclerView的浮动按钮
+     */
     private FloatingActionButton backToTop;
 
+    /**
+     * 后台url
+     */
     private String url;
 
+    /**
+     * RecyclerView显示所需的Adapter
+     */
     private RecyclerView.Adapter mAdapter;
 
+    /**
+     * 每一个Fragment中用来显示主要内容的RecyclerView
+     */
     private RecyclerView recyclerView;
+
 
     protected BaseFragment(String url) {
         this.url = url;
 
+        //如果新建的对象是FuliFragment，就用FuliFragment特有的FuliAdapter
         if (this instanceof FuliFragment) {
             mAdapter = new FuliAdapter(mResults);
-        } else {
+        } else {//否则就用其他Fragment都通用的AllAdapter
             mAdapter = new AllAdapter(mResults);
         }
     }
@@ -67,13 +96,20 @@ public class BaseFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment, container, false);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.list);
+
+        //除了FuliFragment以外，其他Fragment的布局都是一样的，这里是其他Fragment通用的RecyclerView设置
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(getAdapter());
-        recyclerView.addOnScrollListener(getListener());
+        recyclerView.setAdapter(mAdapter);
+        recyclerView.addOnScrollListener(mListener);
 
         return view;
     }
 
+    /**
+     * 从url对应的后台加载数据，并把解析后的数据加载到模型集合中
+     *
+     * @param url 后台对应的url
+     */
     protected void load(final String url) {
 
         new Thread(new Runnable() {
@@ -82,6 +118,7 @@ public class BaseFragment extends Fragment {
                 Util.requestURL(url + page, new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
+                        //当加载后台数据失败后，提示用户
                         Looper.prepare();
                         Toast.makeText(getActivity(), "无法加载数据，请确认网络连接", Toast.LENGTH_SHORT).show();
                         Looper.loop();
@@ -90,12 +127,17 @@ public class BaseFragment extends Fragment {
 
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
+                        //加载后台数据成功，就解析后台返回的数据
                         Return mReturn = Util.resolveJSON(response);
+
                         if (mReturn.getResults().length > 0) {
+                            //把数据模型添加到集合中
                             for (Result result : mReturn.getResults()) {
                                 mResults.add(result);
                             }
                             Log.d("handler", "data_set_changed");
+
+                            //通知RecyclerView的Adapter发生了数据改变，使RecyclerView显示的内容也更新
                             mHandler.sendEmptyMessage(DATA_SET_CHANGED);
                         } else {
                             Log.d("handler", "end");
@@ -108,12 +150,18 @@ public class BaseFragment extends Fragment {
         }).start();
     }
 
+    /**
+     * ！！！！！！！！！！！！！
+     * 实现方法不够完美，暂时还有漏洞
+     * <p>
+     * 监听RecyclerView滚动事件的监听器
+     */
     private RecyclerView.OnScrollListener mListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
 
+            //当RecyclerView停止滚动后
             if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-
                 isScrolling = false;
 
                 new Thread(new Runnable() {
@@ -121,16 +169,16 @@ public class BaseFragment extends Fragment {
                     public void run() {
                         try {
                             Thread.sleep(BUTTON_WAIT);
-                            if (!isScrolling) {
-                                mHandler.sendEmptyMessage(BUTTON_STATE_CHANGED);
-                            }
+
+                            //通知可能需要改变FloatingActionButton的显示状态
+                            mHandler.sendEmptyMessage(BUTTON_STATE_CHANGED);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
                 }).start();
 
-
+                //如果RecyclerView不能往下滚动，意味着到了底部，可以加载下一个资源的数据了
                 if (!recyclerView.canScrollVertically(1)) {
                     page++;
                     load(url);
@@ -143,8 +191,8 @@ public class BaseFragment extends Fragment {
         }
     };
 
-    private Handler mHandler = new Handler() {
 
+    private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -155,9 +203,11 @@ public class BaseFragment extends Fragment {
                     Toast.makeText(getActivity(), "已经到最后啦", Toast.LENGTH_SHORT).show();
                     break;
                 case BUTTON_STATE_CHANGED:
+                    //如果正在滚动，把FloatingActionButton显示出来
                     if (isScrolling) {
                         backToTop.show();
                     } else {
+                        //否则把FloatActionButton隐藏
                         backToTop.hide();
                     }
                     break;

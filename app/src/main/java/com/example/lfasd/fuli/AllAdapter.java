@@ -46,7 +46,7 @@ public class AllAdapter extends RecyclerView.Adapter<AllAdapter.MyHolder> {
         }
     }
 
-    AllAdapter(List<Result> results) {
+    public AllAdapter(List<Result> results) {
         mResults = results;
     }
 

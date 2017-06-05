@@ -31,7 +31,10 @@ public class FuliFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment, container, false);
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.list);
+
+        //FuliFragment显示的效果是一行有两个CardView，使用网络布局管理器
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+
         mRecyclerView.setAdapter(getAdapter());
         mRecyclerView.addOnScrollListener(getListener());
 

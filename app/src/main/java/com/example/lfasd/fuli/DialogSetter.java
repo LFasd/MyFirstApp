@@ -20,7 +20,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 
 /**
  * Created by LFasd on 2017/6/5.
@@ -28,56 +27,74 @@ import java.util.List;
 
 public class DialogSetter {
 
+    //AlertDialog要显示的View
     private View mView;
+
+    //保存图片所需的位图
     private Bitmap mBitmap = null;
-    private Context mContext = null;
+
+    //图片是否已经加载完
     private boolean allReady = false;
+
+    //加载图片时的的进度条
     private ProgressBar mProgressBar = null;
+
+    private Context mContext = null;
     private ImageView mImageView = null;
 
     public DialogSetter(Context context) {
         mContext = context;
     }
 
-    public void setDialog(final AlertDialog dialog, final List<Result> mResults, final int position) {
+    /**
+     * 设置AlertDialog的一些功能，绑定事件监听器
+     *
+     * @param dialog 要进行设置的AlertDialog
+     * @param result 数据源
+     */
+    public void setDialog(final AlertDialog dialog, final Result result) {
         mView = View.inflate(mContext, R.layout.girl, null);
         mProgressBar = (ProgressBar) mView.findViewById(R.id.progressbar);
         mImageView = (ImageView) mView.findViewById(R.id.girl);
 
-        Glide.with(mContext).load(mResults.get(position).getUrl())
+        Glide.with(mContext).load(result.getUrl())
                 .asBitmap()
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+//                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        //图片加载完毕后，把进度条去掉，显示图片，
                         mBitmap = resource;
                         mImageView.setImageBitmap(mBitmap);
                         allReady = true;
                         mProgressBar.setVisibility(View.GONE);
-                        Glide.clear(mImageView);
                     }
                 });
 
         dialog.setView(mView);
-        dialog.setTitle(mResults.get(position).getWho());
+        dialog.setTitle(result.getWho());
         dialog.setButton(AlertDialog.BUTTON_POSITIVE, "保存图片", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //在保存图片之前先检查一下有没有权限
                 if (MainActivity.checkPermission(mContext)) {
+                    //如果图片加载完毕，才保存图片
                     if (allReady) {
-                        savePicture(mBitmap, mResults.get(position).get_id() + ".jpg");
+                        savePicture(mBitmap, result.get_id() + ".jpg");
                     } else {
                         Toast.makeText(mContext, "图片正在加载中", Toast.LENGTH_SHORT).show();
                     }
                 }
+                mBitmap = null;
             }
         });
 
 
+        //点击AlertDialog中的View就关闭AlertDialog
         mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //退出前先把Bitmap设为null，方便垃圾回收器回收内存
                 mImageView.setImageBitmap(null);
                 mBitmap = null;
                 dialog.dismiss();
@@ -85,12 +102,19 @@ public class DialogSetter {
         });
     }
 
+    /**
+     * 把传进来的Bitmap表示的图片保存在SD卡福利文件夹中
+     *
+     * @param bitmap   需要保存的位图
+     * @param fileName 图片名字
+     */
     private void savePicture(Bitmap bitmap, String fileName) {
 
+        //外部储存器的福利文件夹路径
         String path = Environment.getExternalStorageDirectory().getPath() + "/福利/";
-
         File file = null;
 
+        //如果外部存储器可用，才保存图片
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             file = new File(path);
 

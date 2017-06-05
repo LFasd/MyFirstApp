@@ -24,8 +24,8 @@ public class FuliAdapter extends RecyclerView.Adapter<FuliAdapter.MyHolder> {
 
     private List<Result> mResults = null;
     private Context mContext = null;
-    private Bitmap mBitmap = null;
 
+    //每一个FuliItem都是一个CardView，里面包含了一个ImageView和一个TextView
     class MyHolder extends RecyclerView.ViewHolder {
 
         private CardView mCardView;
@@ -91,7 +91,7 @@ public class FuliAdapter extends RecyclerView.Adapter<FuliAdapter.MyHolder> {
 
         AlertDialog dialog = new AlertDialog.Builder(mContext).create();
 
-        new DialogSetter(mContext).setDialog(dialog, mResults, position);
+        new DialogSetter(mContext).setDialog(dialog, mResults.get(position));
 
         dialog.show();
     }
