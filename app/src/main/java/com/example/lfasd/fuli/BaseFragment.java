@@ -79,7 +79,7 @@ public class BaseFragment extends Fragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Util.requestURL(url, new Callback() {
+                Util.requestURL(url + page, new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
                         Looper.prepare();
@@ -131,10 +131,9 @@ public class BaseFragment extends Fragment {
                 }).start();
 
 
-
                 if (!recyclerView.canScrollVertically(1)) {
                     page++;
-                    load(url + page);
+                    load(url);
                 }
             } else {
                 isScrolling = true;
@@ -182,7 +181,4 @@ public class BaseFragment extends Fragment {
         this.backToTop = backToTop;
     }
 
-    protected int getPage() {
-        return page;
-    }
 }

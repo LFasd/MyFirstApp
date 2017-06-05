@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +27,7 @@ public class AllAdapter extends RecyclerView.Adapter<AllAdapter.MyHolder> {
 
     private List<Result> mResults;
     private Context mContext;
-    private MyHolder holder;
+
 
     class MyHolder extends RecyclerView.ViewHolder {
         RelativeLayout view;
@@ -57,16 +58,16 @@ public class AllAdapter extends RecyclerView.Adapter<AllAdapter.MyHolder> {
 
         View view = LayoutInflater.from(mContext).inflate(R.layout.base_item, parent, false);
 
-        holder = new MyHolder(view);
+        final MyHolder holder = new MyHolder(view);
 
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int position = holder.getAdapterPosition();
+                Log.d("test", position + "");
 
-                Intent intent = new Intent();
-                intent.setAction("android.intent.action.VIEW");
-                intent.setData(Uri.parse(mResults.get(position).getUrl()));
+                Intent intent = new Intent(mContext, WebViewActivity.class);
+                intent.putExtra("url", mResults.get(position).getUrl());
                 mContext.startActivity(intent);
             }
         });

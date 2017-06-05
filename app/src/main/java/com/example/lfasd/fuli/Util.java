@@ -16,6 +16,11 @@ import okhttp3.Response;
 
 public class Util {
 
+    /**
+     * 使用OkHttp进行网络请求
+     * @param url
+     * @param callback
+     */
     public static void requestURL(String url, Callback callback) {
 
         OkHttpClient client = new OkHttpClient();
@@ -25,6 +30,11 @@ public class Util {
         client.newCall(request).enqueue(callback);
     }
 
+    /**
+     * 解析返回的JSON
+     * @param response
+     * @return
+     */
     public static Return resolveJSON(Response response) {
         //解析数据
         Gson gson = new Gson();

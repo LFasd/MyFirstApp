@@ -35,7 +35,7 @@ public class FuliFragment extends BaseFragment {
         mRecyclerView.setAdapter(getAdapter());
         mRecyclerView.addOnScrollListener(getListener());
 
-        load(URL + getPage());
+        load(URL);
 
         return view;
     }

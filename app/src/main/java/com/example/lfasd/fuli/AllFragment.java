@@ -11,12 +11,13 @@ import android.view.ViewGroup;
  * Created by LFasd on 2017/6/5.
  */
 
-public class ForeFragment extends BaseFragment {
+public class AllFragment extends BaseFragment {
 
-    public static final String URL = "http://gank.io/api/data/前端/10/";
+    private String url;
 
-    protected ForeFragment(FloatingActionButton button) {
-        super(URL);
+    protected AllFragment(String url, FloatingActionButton button) {
+        super(url);
+        this.url = url;
         setBackToTop(button);
     }
 
@@ -25,7 +26,7 @@ public class ForeFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
-        load(URL + getPage());
+        load(url);
 
         return view;
     }

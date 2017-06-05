@@ -28,6 +28,20 @@ public class MainActivity extends AppCompatActivity {
 
     public static final long EXITING_TIME = 2500;
 
+    public static final String ANDROID_URL = "http://gank.io/api/data/Android/10/";
+
+    public static final String EXPAND_URL = "http://gank.io/api/data/拓展资源/10/";
+
+    public static final String FORE_URL = "http://gank.io/api/data/前端/10/";
+
+    public static final String IOS_URL = "http://gank.io/api/data/iOS/20/";
+
+    public static final String OTHER_URL = "http://gank.io/api/data/瞎推荐/10/";
+
+    public static final String RELAX_URL = "http://gank.io/api/data/休息视频/10/";
+
+    public static final String APP_URL = "http://gank.io/api/data/App/10/";
+
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
 
@@ -37,13 +51,13 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton backToTop;
 
     private FuliFragment mFuliFragment;
-    private AndroidFragment mAndroidFragment;
-    private IosFragment mIosFragment;
-    private ExpandFragment mExpandFragment;
-    private RelaxFragment mRelaxFragment;
-    private AppFragment mAppFragment;
-    private ForeFragment mForeFragment;
-    private OtherFragment mOtherFragment;
+    private AllFragment mAndroidFragment;
+    private AllFragment mIosFragment;
+    private AllFragment mExpandFragment;
+    private AllFragment mRelaxFragment;
+    private AllFragment mAppFragment;
+    private AllFragment mForeFragment;
+    private AllFragment mOtherFragment;
 
     private long time;
 
@@ -89,49 +103,49 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.android:
                         if (mAndroidFragment == null) {
-                            mAndroidFragment = new AndroidFragment(backToTop);
+                            mAndroidFragment = new AllFragment(ANDROID_URL, backToTop);
                         }
                         switchFragment(isshow, mAndroidFragment);
                         bar.setTitle("Android");
                         break;
                     case R.id.ios:
                         if (mIosFragment == null) {
-                            mIosFragment = new IosFragment(backToTop);
+                            mIosFragment = new AllFragment(IOS_URL, backToTop);
                         }
                         switchFragment(isshow, mIosFragment);
                         bar.setTitle("ios");
                         break;
                     case R.id.relax:
                         if (mRelaxFragment == null) {
-                            mRelaxFragment = new RelaxFragment(backToTop);
+                            mRelaxFragment = new AllFragment(RELAX_URL, backToTop);
                         }
                         switchFragment(isshow, mRelaxFragment);
                         bar.setTitle("休息视频");
                         break;
                     case R.id.app:
                         if (mAppFragment == null) {
-                            mAppFragment = new AppFragment(backToTop);
+                            mAppFragment = new AllFragment(APP_URL, backToTop);
                         }
                         switchFragment(isshow, mAppFragment);
                         bar.setTitle("App");
                         break;
                     case R.id.expand:
                         if (mExpandFragment == null) {
-                            mExpandFragment = new ExpandFragment(backToTop);
+                            mExpandFragment = new AllFragment(EXPAND_URL, backToTop);
                         }
                         switchFragment(isshow, mExpandFragment);
                         bar.setTitle("拓展资源");
                         break;
                     case R.id.other:
                         if (mOtherFragment == null) {
-                            mOtherFragment = new OtherFragment(backToTop);
+                            mOtherFragment = new AllFragment(OTHER_URL, backToTop);
                         }
                         switchFragment(isshow, mOtherFragment);
                         bar.setTitle("瞎推荐");
                         break;
                     case R.id.fore:
                         if (mForeFragment == null) {
-                            mForeFragment = new ForeFragment(backToTop);
+                            mForeFragment = new AllFragment(FORE_URL, backToTop);
                         }
                         switchFragment(isshow, mForeFragment);
                         bar.setTitle("前端");
