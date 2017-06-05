@@ -32,10 +32,4 @@ public class AndroidFragment extends BaseFragment {
         return view;
     }
 
-    /**
-     * 取消AndroidFragment正在加载的所有图片
-     */
-    public void clean() {
-        ((AndroidAdapter) getAdapter()).clean();
-    }
 }

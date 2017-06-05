@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static final int WRITE_EXTERNAL_STORAGE = 0;
 
-    public static final long EXITING_TIME = 3000;
+    public static final long EXITING_TIME = 2500;
 
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private ForeFragment mForeFragment;
     private OtherFragment mOtherFragment;
 
-    private boolean isexiting = false;
+    private long time;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -216,23 +216,15 @@ public class MainActivity extends AppCompatActivity {
                 if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
                     mDrawerLayout.closeDrawers();
                 } else {//否则判断是否要关闭程序
-                    if (isexiting) {
+                    if (System.currentTimeMillis() < time) {
                         finish();
+
+                        //杀死进程
+                        android.os.Process.killProcess(android.os.Process.myPid());
                     } else {
-                        isexiting = true;
+                        Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                        time = System.currentTimeMillis() + EXITING_TIME;
                     }
-                    Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                Thread.sleep(EXITING_TIME);
-                                isexiting = false;
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }).start();
                 }
                 break;
             case KeyEvent.KEYCODE_MENU:

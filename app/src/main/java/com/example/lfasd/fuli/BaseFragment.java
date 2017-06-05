@@ -130,6 +130,8 @@ public class BaseFragment extends Fragment {
                     }
                 }).start();
 
+
+
                 if (!recyclerView.canScrollVertically(1)) {
                     page++;
                     load(url + page);
