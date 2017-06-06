@@ -86,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         final Toolbar bar = (Toolbar) findViewById(R.id.toolbar);
+        bar.setTitle("福利");
         setSupportActionBar(bar);
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -108,8 +109,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         mFuliFragment = new FuliFragment(backToTop);
-        bar.setTitle("福利");
         init(mFuliFragment);
+//        bar.setTitle("福利");
 
         mNavigationView.setCheckedItem(R.id.fuli);
         //为NavigationView菜单的点击事件绑定监听器
