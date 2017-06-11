@@ -38,7 +38,6 @@
             android:layout_gravity="right|bottom"
             android:layout_marginBottom="56dp"
             android:layout_marginRight="16dp"
-            android:backgroundTint="@color/colorAccent"
             android:src="@mipmap/ic_action_arrow_top"/>
 
     </android.support.design.widget.CoordinatorLayout>
@@ -48,7 +47,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:headerLayout="@layout/nav_head"
         app:menu="@menu/nav_menu"/>
 
 </android.support.v4.widget.DrawerLayout>

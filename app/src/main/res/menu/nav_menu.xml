@@ -11,21 +11,27 @@
             android:title="@string/android"/>
         <item
             android:id="@+id/ios"
+            android:icon="@mipmap/ic_action_phone"
             android:title="@string/ios"/>
         <item
             android:id="@+id/relax"
+            android:icon="@mipmap/ic_action_youtube"
             android:title="休息视频"/>
         <item
             android:id="@+id/expand"
+            android:icon="@mipmap/ic_action_puzzle"
             android:title="拓展资源"/>
         <item
             android:id="@+id/other"
+            android:icon="@mipmap/ic_action_globe"
             android:title="瞎推荐"/>
         <item
             android:id="@+id/app"
+            android:icon="@mipmap/ic_launcher"
             android:title="App"/>
         <item
             android:id="@+id/fore"
+            android:icon="@mipmap/ic_action_monitor"
             android:title="前端"/>
     </group>
 </menu>
