@@ -1,20 +1,14 @@
 package com.example.lfasd.fuli;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.DocumentsContract;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -29,6 +23,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -53,9 +49,14 @@ public class MainActivity extends AppCompatActivity {
     public static final int WRITE_EXTERNAL_STORAGE = 0;
 
     /**
-     * 打开相册的标识
+     * 修改用户头像标识
      */
-    public static final int CHOOSE_PHONE = 1;
+    public static final int CHOOSE_USER_ICON = 1;
+
+    /**
+     * 修改背景图标标识
+     */
+    public static final int CHOOSE_USER_BACKGROUND = 2;
 
     /**
      * 在这么多时间间隔内连续按两下返回键就能退出应用程序
@@ -78,7 +79,9 @@ public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
-    private CircleImageView mCircleImageView;
+    private CircleImageView user_icon;
+    private ImageView background;
+    private TextView user_sign;
 
     private Toolbar mToolbar;
 
@@ -130,8 +133,16 @@ public class MainActivity extends AppCompatActivity {
         backToTop = (FloatingActionButton) findViewById(R.id.back_to_top);
 
         View nav_head = getLayoutInflater().inflate(R.layout.nav_head, null, false);
-        mCircleImageView = (CircleImageView) nav_head.findViewById(R.id.user_picture);
+
+        user_icon = (CircleImageView) nav_head.findViewById(R.id.user_picture);
         initUser();
+
+        user_sign = (TextView) nav_head.findViewById(R.id.user_sign);
+        initUserSign();
+
+        background = (ImageView) nav_head.findViewById(R.id.background);
+        initBackground();
+
 
         mNavigationView.addHeaderView(nav_head);
 
@@ -325,25 +336,33 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * 初始化滑动菜单的用户头像
+     */
     private void initUser() {
-        File file = new File(Environment.getExternalStorageDirectory().getPath() + "/user/user.jpg");
+
+        File file = new File(getCacheDir() + "/user/user.jpg");
+
+        //如果图片缓存存在，直接使用Glide加载图片
         if (file.exists()) {
             Glide.with(this).load(file)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .fitCenter().into(mCircleImageView);
+                    .centerCrop().into(user_icon);
         } else {
+            //否则使用默认头像
             Glide.with(this).load(R.mipmap.ic_action_user)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .into(mCircleImageView);
+                    .into(user_icon);
         }
 
-        mCircleImageView.setOnClickListener(new View.OnClickListener() {
+        //为用户头像设置监听器，点击图片打开相册选择新头像
+        user_icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (checkPermission(MainActivity.this)) {
                     Intent intent = new Intent("android.intent.action.GET_CONTENT");
                     intent.setType("image/*");
-                    startActivityForResult(intent, CHOOSE_PHONE);
+                    startActivityForResult(intent, CHOOSE_USER_ICON);
                 }
             }
         });
@@ -352,37 +371,84 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case CHOOSE_PHONE:
+
+            case CHOOSE_USER_ICON:
                 if (resultCode == Activity.RESULT_OK) {
-                    Glide.with(this).load(data.getData())
-                            .asBitmap()
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
-                            .fitCenter().into(new SimpleTarget<Bitmap>() {
-                        @Override
-                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                            mCircleImageView.setImageBitmap(resource);
-
-                            String path = Environment.getExternalStorageDirectory().getPath() + "/user/";
-
-                            File file = new File(path);
-                            if (!file.exists()) {
-                                file.mkdir();
-                            }
-
-                            OutputStream fos = null;
-                            try {
-                                fos = new FileOutputStream(path + "user.jpg", false);
-                                resource.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-                                fos.close();
-                            } catch (FileNotFoundException e) {
-                                e.printStackTrace();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
+                    loadAndSaveImage(data.getData(), "user.jpg", user_icon);
                 }
+                break;
+            case CHOOSE_USER_BACKGROUND:
+                if (resultCode == Activity.RESULT_OK) {
+                    loadAndSaveImage(data.getData(), "background.jpg", background);
+                }
+                break;
         }
     }
 
+    private void loadAndSaveImage(Uri uri, final String target, final ImageView view) {
+        Glide.with(this).load(uri)
+                .asBitmap()
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .centerCrop().into(new SimpleTarget<Bitmap>() {
+            @Override
+            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                String path = getCacheDir() + "/user/";
+
+                File file = new File(path);
+                if (!file.exists()) {
+                    file.mkdir();
+                }
+
+                OutputStream fos = null;
+                try {
+                    fos = new FileOutputStream(path + target, false);
+                    resource.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                    fos.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        Glide.with(this).load(uri)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .centerCrop()
+                .into(view);
+    }
+
+    private void initUserSign() {
+        SharedPreferences sharedPreferences = getSharedPreferences("user_sign", Context.MODE_PRIVATE);
+        user_sign.setText(sharedPreferences.getString("user_sign", "点击修改个性签名"));
+
+        user_sign.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SignActivity.actionStart(MainActivity.this, user_sign.getText().toString());
+            }
+        });
+    }
+
+    private void initBackground() {
+        File file = new File(getCacheDir() + "/user/background.jpg");
+
+        if (file.exists()) {
+            Glide.with(this).load(file)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .centerCrop()
+                    .into(background);
+        }
+
+        background.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (checkPermission(MainActivity.this)) {
+                    Intent intent = new Intent("android.intent.action.GET_CONTENT");
+                    intent.setType("image/*");
+                    startActivityForResult(intent, CHOOSE_USER_BACKGROUND);
+                }
+            }
+        });
+    }
 }
