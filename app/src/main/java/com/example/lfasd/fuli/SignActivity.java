@@ -16,7 +16,7 @@ public class SignActivity extends AppCompatActivity {
 
     public static void actionStart(Activity activity, String data1) {
         Intent intent = new Intent(activity, SignActivity.class);
-        intent.putExtra("sign", data1);
+        intent.putExtra("user_sign", data1);
         activity.startActivityForResult(intent, MainActivity.CHANGE_USER_SIGN);
     }
 
@@ -29,7 +29,7 @@ public class SignActivity extends AppCompatActivity {
 
         final Intent intent = getIntent();
 
-        editText.setText(intent.getStringExtra("sign"));
+        editText.setText(intent.getStringExtra("user_sign"));
 
         ImageView save = (ImageView) findViewById(R.id.save);
 
@@ -37,7 +37,7 @@ public class SignActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent1 = new Intent();
-                intent1.putExtra("sign", editText.getText().toString());
+                intent1.putExtra("user_sign", editText.getText().toString());
                 setResult(RESULT_OK, intent1);
                 finish();
             }

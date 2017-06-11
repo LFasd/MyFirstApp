@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -87,6 +88,8 @@ public class MainActivity extends AppCompatActivity {
     private CircleImageView user_icon;
     private ImageView background;
     private TextView user_sign;
+
+    private SharedPreferences mSharedPreferences;
 
     private Toolbar mToolbar;
 
@@ -365,7 +368,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (checkPermission(MainActivity.this)) {
-                    Intent intent = new Intent("android.intent.action.GET_CONTENT");
+                    Intent intent = new Intent(Intent.ACTION_PICK);
                     intent.setType("image/*");
                     startActivityForResult(intent, CHANGE_USER_ICON);
                 }
@@ -376,7 +379,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-
             case CHANGE_USER_ICON:
                 if (resultCode == Activity.RESULT_OK) {
                     loadAndSaveImage(data.getData(), "user.jpg", user_icon);
@@ -389,8 +391,11 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case CHANGE_USER_SIGN:
                 if (resultCode == Activity.RESULT_OK) {
-                    String sign = data.getStringExtra("sign");
+                    String sign = data.getStringExtra("user_sign");
                     user_sign.setText(sign);
+                    SharedPreferences.Editor editor = mSharedPreferences.edit();
+                    editor.putString("user_sign", sign);
+                    editor.commit();
                 }
                 break;
         }
@@ -430,8 +435,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initUserSign() {
-        SharedPreferences sharedPreferences = getSharedPreferences("user_sign", Context.MODE_PRIVATE);
-        user_sign.setText(sharedPreferences.getString("user_sign", "点击修改个性签名"));
+        mSharedPreferences = getPreferences(Context.MODE_PRIVATE);
+        String sign = mSharedPreferences.getString("user_sign", "NO");
+        user_sign.setText(mSharedPreferences.getString("user_sign", "点击修改个性签名"));
 
         user_sign.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -455,7 +461,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (checkPermission(MainActivity.this)) {
-                    Intent intent = new Intent("android.intent.action.GET_CONTENT");
+                    Intent intent = new Intent(Intent.ACTION_PICK);
                     intent.setType("image/*");
                     startActivityForResult(intent, CHANGE_USER_BACKGROUND);
                 }
