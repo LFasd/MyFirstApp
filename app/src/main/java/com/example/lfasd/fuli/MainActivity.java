@@ -51,12 +51,17 @@ public class MainActivity extends AppCompatActivity {
     /**
      * 修改用户头像标识
      */
-    public static final int CHOOSE_USER_ICON = 1;
+    public static final int CHANGE_USER_ICON = 1;
 
     /**
      * 修改背景图标标识
      */
-    public static final int CHOOSE_USER_BACKGROUND = 2;
+    public static final int CHANGE_USER_BACKGROUND = 2;
+
+    /**
+     * 修改个性签名标识
+     */
+    public static final int CHANGE_USER_SIGN = 3;
 
     /**
      * 在这么多时间间隔内连续按两下返回键就能退出应用程序
@@ -362,7 +367,7 @@ public class MainActivity extends AppCompatActivity {
                 if (checkPermission(MainActivity.this)) {
                     Intent intent = new Intent("android.intent.action.GET_CONTENT");
                     intent.setType("image/*");
-                    startActivityForResult(intent, CHOOSE_USER_ICON);
+                    startActivityForResult(intent, CHANGE_USER_ICON);
                 }
             }
         });
@@ -372,14 +377,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
 
-            case CHOOSE_USER_ICON:
+            case CHANGE_USER_ICON:
                 if (resultCode == Activity.RESULT_OK) {
                     loadAndSaveImage(data.getData(), "user.jpg", user_icon);
                 }
                 break;
-            case CHOOSE_USER_BACKGROUND:
+            case CHANGE_USER_BACKGROUND:
                 if (resultCode == Activity.RESULT_OK) {
                     loadAndSaveImage(data.getData(), "background.jpg", background);
+                }
+                break;
+            case CHANGE_USER_SIGN:
+                if (resultCode == Activity.RESULT_OK) {
+                    String sign = data.getStringExtra("sign");
+                    user_sign.setText(sign);
                 }
                 break;
         }
@@ -446,7 +457,7 @@ public class MainActivity extends AppCompatActivity {
                 if (checkPermission(MainActivity.this)) {
                     Intent intent = new Intent("android.intent.action.GET_CONTENT");
                     intent.setType("image/*");
-                    startActivityForResult(intent, CHOOSE_USER_BACKGROUND);
+                    startActivityForResult(intent, CHANGE_USER_BACKGROUND);
                 }
             }
         });
