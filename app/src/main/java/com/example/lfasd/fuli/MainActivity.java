@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -130,8 +129,10 @@ public class MainActivity extends AppCompatActivity {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar.setTitle("福利");
         setSupportActionBar(mToolbar);
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
+            //在ActionBar上显示菜单按钮
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.mipmap.ic_action_database);
         }
@@ -140,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
         backToTop = (FloatingActionButton) findViewById(R.id.back_to_top);
 
+        //这里有个坑
         View nav_head = getLayoutInflater().inflate(R.layout.nav_head, null, false);
 
         user_icon = (CircleImageView) nav_head.findViewById(R.id.user_picture);
@@ -151,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
         background = (ImageView) nav_head.findViewById(R.id.background);
         initBackground();
 
-
+        //为
         mNavigationView.addHeaderView(nav_head);
 
 
@@ -172,7 +174,9 @@ public class MainActivity extends AppCompatActivity {
         mNavigationView.setNavigationItemSelectedListener(mListener);
     }
 
-
+    /**
+     *
+     */
     private NavigationView.OnNavigationItemSelectedListener mListener =
             new NavigationView.OnNavigationItemSelectedListener() {
                 @Override
@@ -232,6 +236,7 @@ public class MainActivity extends AppCompatActivity {
                             mToolbar.setTitle("前端");
                             break;
                     }
+                    //选择完成后把滑动菜单关闭
                     mDrawerLayout.closeDrawers();
                     return true;
                 }
@@ -345,7 +350,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * 初始化滑动菜单的用户头像
+     * 打开应用后初始化滑动菜单的用户头像
      */
     private void initUser() {
 
@@ -363,7 +368,7 @@ public class MainActivity extends AppCompatActivity {
                     .into(user_icon);
         }
 
-        //为用户头像设置监听器，点击图片打开相册选择新头像
+        //为用户头像设置监听器，点击头像打开相册选择新头像
         user_icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -381,12 +386,14 @@ public class MainActivity extends AppCompatActivity {
         switch (requestCode) {
             case CHANGE_USER_ICON:
                 if (resultCode == Activity.RESULT_OK) {
-                    loadAndSaveImage(data.getData(), "user.jpg", user_icon);
+                    saveImage(data.getData(), "user.jpg");
+                    showImage(data.getData(), user_icon);
                 }
                 break;
             case CHANGE_USER_BACKGROUND:
                 if (resultCode == Activity.RESULT_OK) {
-                    loadAndSaveImage(data.getData(), "background.jpg", background);
+                    saveImage(data.getData(), "background.jpg");
+                    showImage(data.getData(), background);
                 }
                 break;
             case CHANGE_USER_SIGN:
@@ -401,7 +408,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void loadAndSaveImage(Uri uri, final String target, final ImageView view) {
+    /**
+     * 把用户选择的图片保存在缓存中，下次打开应用使用缓存中的图片
+     *
+     * @param uri    图片的Uri信息
+     * @param target 图片的名字
+     */
+    private void saveImage(Uri uri, final String target) {
         Glide.with(this).load(uri)
                 .asBitmap()
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -427,18 +440,32 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
 
+    /**
+     * 将图片加载到指定的ImageView中
+     *
+     * @param uri  图片的Uri信息
+     * @param view 需要加载图片的ImageView
+     */
+    private void showImage(Uri uri, ImageView view) {
         Glide.with(this).load(uri)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .centerCrop()
                 .into(view);
     }
 
+    /**
+     * 打开应用后初始化用户的个性签名
+     */
     private void initUserSign() {
-        mSharedPreferences = getPreferences(Context.MODE_PRIVATE);
-        String sign = mSharedPreferences.getString("user_sign", "NO");
-        user_sign.setText(mSharedPreferences.getString("user_sign", "点击修改个性签名"));
+        if (mSharedPreferences == null) {
+            mSharedPreferences = getPreferences(Context.MODE_PRIVATE);
+        }
+        String sign = mSharedPreferences.getString("user_sign", "点击修改个性签名");
+        user_sign.setText(sign);
 
+        //点击个性签名修改个性签名
         user_sign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -447,9 +474,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * 打开应用后初始化滑动菜单中的用户背景墙
+     */
     private void initBackground() {
         File file = new File(getCacheDir() + "/user/background.jpg");
 
+        //如果图片缓存存在，就加载图片
         if (file.exists()) {
             Glide.with(this).load(file)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -457,6 +488,7 @@ public class MainActivity extends AppCompatActivity {
                     .into(background);
         }
 
+        //为背景墙绑定事件监听器，用户点击后打开相册选择图片
         background.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

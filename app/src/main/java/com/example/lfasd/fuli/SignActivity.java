@@ -14,9 +14,14 @@ import android.widget.ImageView;
  */
 public class SignActivity extends AppCompatActivity {
 
-    public static void actionStart(Activity activity, String data1) {
+    /**
+     * 启动SignActivity并把数据传给SignActivity
+     * @param activity 启动SignActivity的Activity
+     * @param old_sign    用户当前的个性签名
+     */
+    public static void actionStart(Activity activity, String old_sign) {
         Intent intent = new Intent(activity, SignActivity.class);
-        intent.putExtra("user_sign", data1);
+        intent.putExtra("user_sign", old_sign);
         activity.startActivityForResult(intent, MainActivity.CHANGE_USER_SIGN);
     }
 
@@ -36,9 +41,9 @@ public class SignActivity extends AppCompatActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent1 = new Intent();
-                intent1.putExtra("user_sign", editText.getText().toString());
-                setResult(RESULT_OK, intent1);
+                Intent data = new Intent();
+                data.putExtra("user_sign", editText.getText().toString());
+                setResult(RESULT_OK, data);
                 finish();
             }
         });

@@ -13,21 +13,14 @@ import android.view.ViewGroup;
 
 public class AllFragment extends BaseFragment {
 
-    private String url;
-
     public AllFragment(String url, FloatingActionButton button) {
         super(url);
-        this.url = url;
         setBackToTop(button);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = super.onCreateView(inflater, container, savedInstanceState);
-
-        load(url);
-
-        return view;
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 }

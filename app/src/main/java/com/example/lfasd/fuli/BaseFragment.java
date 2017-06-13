@@ -32,10 +32,19 @@ import okhttp3.Response;
  */
 public class BaseFragment extends Fragment {
 
+    /**
+     * 数据改变标识
+     */
     public static final int DATA_SET_CHANGED = 0;
 
+    /**
+     * 数据末尾标识
+     */
     public static final int END = 1;
 
+    /**
+     * 按钮状态改变标识
+     */
     public static final int BUTTON_STATE_CHANGED = 2;
 
     /**
@@ -56,7 +65,7 @@ public class BaseFragment extends Fragment {
     /**
      * 对应RecyclerView中每个Item的数据模型
      */
-    private List<Result> mResults = new ArrayList<>();
+    private List<Result> mResults;
 
     /**
      * 回滚到RecyclerView的浮动按钮
@@ -78,9 +87,13 @@ public class BaseFragment extends Fragment {
      */
     private RecyclerView recyclerView;
 
-
+    /**
+     * @param url
+     */
     protected BaseFragment(String url) {
         this.url = url;
+
+        mResults = new ArrayList<>();
 
         //如果新建的对象是FuliFragment，就用FuliFragment特有的FuliAdapter
         if (this instanceof FuliFragment) {
@@ -102,16 +115,17 @@ public class BaseFragment extends Fragment {
         recyclerView.setAdapter(mAdapter);
         recyclerView.addOnScrollListener(mListener);
 
+        load();
+
         return view;
     }
 
     /**
-     * 从url对应的后台加载数据，并把解析后的数据加载到模型集合中
-     *
-     * @param url 后台对应的url
+     * 从url对应的后台加载数据，并把解析后的数据加载到模型集合中，然后通过Handler发送通知数据改变，刷新界面
      */
-    protected void load(final String url) {
+    protected void load() {
 
+        //启动一条新的线程来进行网络连接
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -181,7 +195,7 @@ public class BaseFragment extends Fragment {
                 //如果RecyclerView不能往下滚动，意味着到了底部，可以加载下一个资源的数据了
                 if (!recyclerView.canScrollVertically(1)) {
                     page++;
-                    load(url);
+                    load();
                 }
             } else {
                 isScrolling = true;
@@ -223,10 +237,20 @@ public class BaseFragment extends Fragment {
         return mAdapter;
     }
 
+    /**
+     * 给MainActivity中的FloatingActionButton使用的函数，返回当前正在显示的Fragment的RecyclerView
+     *
+     * @return 前正在显示的Fragment的RecyclerView
+     */
     public RecyclerView getRecyclerView() {
         return recyclerView;
     }
 
+    /**
+     * 获取MainActivity中的FloatingActionButton，当RecyclerView发生滑动的时候，可以改变浮动按钮的状态
+     *
+     * @param backToTop MainActivity中的FloatingActionButton
+     */
     protected void setBackToTop(FloatingActionButton backToTop) {
         this.backToTop = backToTop;
     }

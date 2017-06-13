@@ -34,11 +34,10 @@ public class FuliFragment extends BaseFragment {
 
         //FuliFragment显示的效果是一行有两个CardView，使用网络布局管理器
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-
         mRecyclerView.setAdapter(getAdapter());
         mRecyclerView.addOnScrollListener(getListener());
 
-        load(URL);
+        load();
 
         return view;
     }
