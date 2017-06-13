@@ -95,9 +95,9 @@ public class AllAdapter extends RecyclerView.Adapter<AllAdapter.MyHolder> {
                     .thumbnail(0.2f)
                     .into(holder.mImageView);
         } else {
-            //如果没有图片，就是用默认的安卓机器人作为图标
+            //如果没有图片，就使用默认的图标
             Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources()
-                    , R.mipmap.ic_action_wifi);
+                    , R.mipmap.ic_action_warning);
             holder.mImageView.setImageBitmap(bitmap);
         }
 

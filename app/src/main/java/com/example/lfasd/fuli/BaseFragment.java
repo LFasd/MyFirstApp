@@ -60,7 +60,7 @@ public class BaseFragment extends Fragment {
     /**
      * 现在已经加载过的url资源数
      */
-    private int page = 1;
+    private int page;
 
     /**
      * 对应RecyclerView中每个Item的数据模型
@@ -88,18 +88,23 @@ public class BaseFragment extends Fragment {
     private RecyclerView recyclerView;
 
     /**
+     *
      * @param url
+     * @param button
+     * @return
      */
-    protected BaseFragment(String url) {
-        this.url = url;
+    public static void newInstance(String url, FloatingActionButton button, BaseFragment baseFragment){
+        baseFragment.url = url;
+        baseFragment.backToTop = button;
 
-        mResults = new ArrayList<>();
+        baseFragment.mResults = new ArrayList<>();
+        baseFragment.page = 1;
 
         //如果新建的对象是FuliFragment，就用FuliFragment特有的FuliAdapter
-        if (this instanceof FuliFragment) {
-            mAdapter = new FuliAdapter(mResults);
+        if (baseFragment instanceof FuliFragment) {
+            baseFragment.mAdapter = new FuliAdapter(baseFragment.mResults);
         } else {//否则就用其他Fragment都通用的AllAdapter
-            mAdapter = new AllAdapter(mResults);
+            baseFragment.mAdapter = new AllAdapter(baseFragment.mResults);
         }
     }
 

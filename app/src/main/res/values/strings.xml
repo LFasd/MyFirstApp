@@ -3,4 +3,7 @@
     <string name="fuli">福利</string>
     <string name="android">Android</string>
     <string name="ios">ios</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

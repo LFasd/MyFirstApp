@@ -13,9 +13,10 @@ import android.view.ViewGroup;
 
 public class AllFragment extends BaseFragment {
 
-    public AllFragment(String url, FloatingActionButton button) {
-        super(url);
-        setBackToTop(button);
+    public static AllFragment newInstance(String url, FloatingActionButton button) {
+        AllFragment allFragment = new AllFragment();
+        BaseFragment.newInstance(url, button, allFragment);
+        return allFragment;
     }
 
     @Nullable

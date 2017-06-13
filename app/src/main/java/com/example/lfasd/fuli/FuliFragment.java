@@ -18,9 +18,10 @@ public class FuliFragment extends BaseFragment {
 
     public static final String URL = "http://gank.io/api/data/福利/10/";
 
-    public FuliFragment(FloatingActionButton button) {
-        super(URL);
-        setBackToTop(button);
+    public static FuliFragment newInstance(FloatingActionButton button) {
+        FuliFragment fuliFragment = new FuliFragment();
+        BaseFragment.newInstance(URL, button, fuliFragment);
+        return fuliFragment;
     }
 
     private RecyclerView mRecyclerView;

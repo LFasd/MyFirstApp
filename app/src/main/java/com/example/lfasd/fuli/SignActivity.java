@@ -16,6 +16,7 @@ public class SignActivity extends AppCompatActivity {
 
     /**
      * 启动SignActivity并把数据传给SignActivity
+     *
      * @param activity 启动SignActivity的Activity
      * @param old_sign    用户当前的个性签名
      */

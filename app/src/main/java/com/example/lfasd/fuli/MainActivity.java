@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        mFuliFragment = new FuliFragment(backToTop);
+        mFuliFragment = FuliFragment.newInstance(backToTop);
         init(mFuliFragment);
 
         mNavigationView.setCheckedItem(R.id.fuli);
@@ -188,49 +188,49 @@ public class MainActivity extends AppCompatActivity {
                             break;
                         case R.id.android:
                             if (mAndroidFragment == null) {
-                                mAndroidFragment = new AllFragment(ANDROID_URL, backToTop);
+                                mAndroidFragment = AllFragment.newInstance(ANDROID_URL, backToTop);
                             }
                             switchFragment(isshow, mAndroidFragment);
                             mToolbar.setTitle("Android");
                             break;
                         case R.id.ios:
                             if (mIosFragment == null) {
-                                mIosFragment = new AllFragment(IOS_URL, backToTop);
+                                mIosFragment = AllFragment.newInstance(IOS_URL, backToTop);
                             }
                             switchFragment(isshow, mIosFragment);
                             mToolbar.setTitle("ios");
                             break;
                         case R.id.relax:
                             if (mRelaxFragment == null) {
-                                mRelaxFragment = new AllFragment(RELAX_URL, backToTop);
+                                mRelaxFragment = AllFragment.newInstance(RELAX_URL, backToTop);
                             }
                             switchFragment(isshow, mRelaxFragment);
                             mToolbar.setTitle("休息视频");
                             break;
                         case R.id.app:
                             if (mAppFragment == null) {
-                                mAppFragment = new AllFragment(APP_URL, backToTop);
+                                mAppFragment = AllFragment.newInstance(APP_URL, backToTop);
                             }
                             switchFragment(isshow, mAppFragment);
                             mToolbar.setTitle("App");
                             break;
                         case R.id.expand:
                             if (mExpandFragment == null) {
-                                mExpandFragment = new AllFragment(EXPAND_URL, backToTop);
+                                mExpandFragment = AllFragment.newInstance(EXPAND_URL, backToTop);
                             }
                             switchFragment(isshow, mExpandFragment);
                             mToolbar.setTitle("拓展资源");
                             break;
                         case R.id.other:
                             if (mOtherFragment == null) {
-                                mOtherFragment = new AllFragment(OTHER_URL, backToTop);
+                                mOtherFragment = AllFragment.newInstance(OTHER_URL, backToTop);
                             }
                             switchFragment(isshow, mOtherFragment);
                             mToolbar.setTitle("瞎推荐");
                             break;
                         case R.id.fore:
                             if (mForeFragment == null) {
-                                mForeFragment = new AllFragment(FORE_URL, backToTop);
+                                mForeFragment = AllFragment.newInstance(FORE_URL, backToTop);
                             }
                             switchFragment(isshow, mForeFragment);
                             mToolbar.setTitle("前端");
