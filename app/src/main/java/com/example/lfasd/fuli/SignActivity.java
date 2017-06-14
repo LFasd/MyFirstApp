@@ -42,8 +42,6 @@ public class SignActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("修改签名");
-        toolbar.setSubtitleTextColor(Color.WHITE);
-        toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();

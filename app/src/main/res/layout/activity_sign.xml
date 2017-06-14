@@ -10,7 +10,8 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary"/>
+        android:background="@color/colorPrimary"
+        app:popupTheme="@style/MyStyle"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -27,8 +28,8 @@
             android:textSize="18sp"
             app:met_helperTextAlwaysShown="true"
             app:met_helperTextColor="#ff9e2f"
-            app:met_underlineColor="#0ddcd2"
-            app:met_maxCharacters="30"/>
+            app:met_maxCharacters="30"
+            app:met_underlineColor="#0ddcd2"/>
 
     </RelativeLayout>
 
