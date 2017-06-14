@@ -66,9 +66,7 @@ public class AllAdapter extends RecyclerView.Adapter<AllAdapter.MyHolder> {
                 int position = holder.getAdapterPosition();
                 Log.d("test", position + "");
 
-                Intent intent = new Intent(mContext, WebViewActivity.class);
-                intent.putExtra("url", mResults.get(position).getUrl());
-                mContext.startActivity(intent);
+                WebViewActivity.actionStart(mContext, mResults.get(position).getUrl());
             }
         });
 

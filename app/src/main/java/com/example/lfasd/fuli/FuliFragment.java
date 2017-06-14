@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import lib.homhomlib.design.SlidingLayout;
+
 
 /**
  * Created by LFasd on 2017/6/3.
@@ -18,13 +20,13 @@ public class FuliFragment extends BaseFragment {
 
     public static final String URL = "http://gank.io/api/data/福利/10/";
 
+    private RecyclerView mRecyclerView;
+
     public static FuliFragment newInstance(FloatingActionButton button) {
         FuliFragment fuliFragment = new FuliFragment();
         BaseFragment.newInstance(URL, button, fuliFragment);
         return fuliFragment;
     }
-
-    private RecyclerView mRecyclerView;
 
     @Nullable
     @Override
@@ -37,6 +39,9 @@ public class FuliFragment extends BaseFragment {
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         mRecyclerView.setAdapter(getAdapter());
         mRecyclerView.addOnScrollListener(getListener());
+
+        SlidingLayout slidingLayout = (SlidingLayout) view.findViewById(R.id.slidinglayout);
+        setSlidingLayout(slidingLayout);
 
         load();
 

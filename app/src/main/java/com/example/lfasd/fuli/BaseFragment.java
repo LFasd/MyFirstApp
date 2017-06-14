@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import lib.homhomlib.design.SlidingLayout;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -87,13 +88,14 @@ public class BaseFragment extends Fragment {
      */
     private RecyclerView recyclerView;
 
+    private SlidingLayout mSlidingLayout;
+
     /**
-     *
      * @param url
      * @param button
      * @return
      */
-    public static void newInstance(String url, FloatingActionButton button, BaseFragment baseFragment){
+    public static void newInstance(String url, FloatingActionButton button, BaseFragment baseFragment) {
         baseFragment.url = url;
         baseFragment.backToTop = button;
 
@@ -119,6 +121,8 @@ public class BaseFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(mAdapter);
         recyclerView.addOnScrollListener(mListener);
+
+        mSlidingLayout = (SlidingLayout) view.findViewById(R.id.slidinglayout);
 
         load();
 
@@ -219,7 +223,7 @@ public class BaseFragment extends Fragment {
                     mAdapter.notifyDataSetChanged();
                     break;
                 case END:
-                    Toast.makeText(getActivity(), "已经到最后啦", Toast.LENGTH_SHORT).show();
+                    mSlidingLayout.setSlidingMode(SlidingLayout.SLIDING_MODE_BOTH);
                     break;
                 case BUTTON_STATE_CHANGED:
                     //如果正在滚动，把FloatingActionButton显示出来
@@ -251,13 +255,8 @@ public class BaseFragment extends Fragment {
         return recyclerView;
     }
 
-    /**
-     * 获取MainActivity中的FloatingActionButton，当RecyclerView发生滑动的时候，可以改变浮动按钮的状态
-     *
-     * @param backToTop MainActivity中的FloatingActionButton
-     */
-    protected void setBackToTop(FloatingActionButton backToTop) {
-        this.backToTop = backToTop;
+    protected void setSlidingLayout(SlidingLayout slidingLayout) {
+        mSlidingLayout = slidingLayout;
     }
 
 }

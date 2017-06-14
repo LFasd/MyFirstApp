@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * 控制Fragment切换的FragmentManager
      */
-    private FragmentManager fm = getSupportFragmentManager();
+    private FragmentManager fm;
 
     /**
      * 记录当前显示的是哪个Fragment
@@ -136,6 +136,8 @@ public class MainActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.mipmap.ic_action_database);
         }
+
+        fm = getSupportFragmentManager();
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
@@ -312,8 +314,10 @@ public class MainActivity extends AppCompatActivity {
      */
     private void init(BaseFragment fragment) {
         backToTop.hide();
+
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.add(R.id.fragment, fragment).show(fragment).commit();
+        transaction.replace(R.id.fragment, fragment).show(fragment).commit();
+
         isshow = fragment;
     }
 

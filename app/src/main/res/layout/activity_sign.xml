@@ -1,24 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:layout_margin="5dp"
-              android:orientation="horizontal">
+              android:background="#e2e2e2"
+              android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/sign"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:textSize="20sp"/>
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"/>
 
-    <ImageView
-        android:id="@+id/save"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
-        android:src="@mipmap/ic_action_record"/>
+        android:background="#fff">
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/sign"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:hint="输入个性签名"
+            android:textSize="18sp"
+            app:met_helperTextAlwaysShown="true"
+            app:met_helperTextColor="#ff9e2f"
+            app:met_underlineColor="#0ddcd2"
+            app:met_maxCharacters="30"/>
+
+    </RelativeLayout>
 
 </LinearLayout>

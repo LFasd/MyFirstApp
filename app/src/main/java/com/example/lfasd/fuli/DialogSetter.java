@@ -89,6 +89,15 @@ public class DialogSetter {
         });
 
 
+
+        dialog.setButton(AlertDialog.BUTTON_NEGATIVE, "取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+
         //点击AlertDialog中的View就关闭AlertDialog
         mView.setOnClickListener(new View.OnClickListener() {
             @Override

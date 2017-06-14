@@ -2,23 +2,32 @@ package com.example.lfasd.fuli;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+
+import com.rengwuxian.materialedittext.MaterialEditText;
 
 /**
  * Created by LFasd on 2017/6/11.
  */
 public class SignActivity extends AppCompatActivity {
 
+    private MaterialEditText mEditText;
+
     /**
      * 启动SignActivity并把数据传给SignActivity
      *
      * @param activity 启动SignActivity的Activity
-     * @param old_sign    用户当前的个性签名
+     * @param old_sign 用户当前的个性签名
      */
     public static void actionStart(Activity activity, String old_sign) {
         Intent intent = new Intent(activity, SignActivity.class);
@@ -31,22 +40,50 @@ public class SignActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign);
 
-        final EditText editText = (EditText) findViewById(R.id.sign);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("修改签名");
+        toolbar.setSubtitleTextColor(Color.WHITE);
+        toolbar.setTitleTextColor(Color.WHITE);
+        setSupportActionBar(toolbar);
 
-        final Intent intent = getIntent();
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.mipmap.ic_action_arrow_left);
+        }
 
-        editText.setText(intent.getStringExtra("user_sign"));
+        mEditText = (MaterialEditText) findViewById(R.id.sign);
 
-        ImageView save = (ImageView) findViewById(R.id.save);
+        Intent intent = getIntent();
 
-        save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent data = new Intent();
-                data.putExtra("user_sign", editText.getText().toString());
-                setResult(RESULT_OK, data);
+        mEditText.setText(intent.getStringExtra("user_sign"));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
                 finish();
-            }
-        });
+                break;
+            case R.id.save:
+                String sign = mEditText.getText().toString();
+
+                if (sign.length() > mEditText.getMaxCharacters()) {
+                    mEditText.setError("字数过多");
+                } else {
+                    Intent intent = new Intent();
+                    intent.putExtra("user_sign", mEditText.getText().toString());
+                    setResult(Activity.RESULT_OK, intent);
+                    finish();
+                }
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.save, menu);
+        return true;
     }
 }

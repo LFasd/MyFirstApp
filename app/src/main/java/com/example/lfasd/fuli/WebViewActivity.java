@@ -1,6 +1,8 @@
 package com.example.lfasd.fuli;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,8 +21,20 @@ import android.webkit.WebViewClient;
 public class WebViewActivity extends AppCompatActivity {
 
     private String url;
-    WebView mWebView;
+    private WebView mWebView;
     private ProgressDialog mProgressDialog;
+
+    /**
+     * 启动WebViewActivity并把要加载的url传过去
+     *
+     * @param context 启动Activity的上下文
+     * @param url     WebView需要加载的url
+     */
+    public static void actionStart(Context context, String url) {
+        Intent intent = new Intent(context, WebViewActivity.class);
+        intent.putExtra("url", url);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,9 +90,11 @@ public class WebViewActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
+                //如果WebView可以回退，就回退到上级页面
                 if (mWebView.canGoBack()) {
                     mWebView.goBack();
                 } else {
+                    //如果不能回退，就退出该Activity
                     finish();
                 }
                 break;
@@ -90,7 +106,6 @@ public class WebViewActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         mProgressDialog.dismiss();
-        mWebView.getRootView();
         mWebView.clearHistory();
         super.onDestroy();
     }
