@@ -61,12 +61,12 @@ public class BaseFragment extends Fragment {
     /**
      * 现在已经加载过的url资源数
      */
-    private int page;
+    private int page = 1;
 
     /**
      * 对应RecyclerView中每个Item的数据模型
      */
-    private List<Result> mResults;
+    private List<Result> mResults = new ArrayList<>();
 
     /**
      * 回滚到RecyclerView的浮动按钮
@@ -81,7 +81,7 @@ public class BaseFragment extends Fragment {
     /**
      * RecyclerView显示所需的Adapter
      */
-    private RecyclerView.Adapter mAdapter;
+    private BaseAdapter mAdapter;
 
     /**
      * 每一个Fragment中用来显示主要内容的RecyclerView
@@ -95,18 +95,29 @@ public class BaseFragment extends Fragment {
      * @param button
      * @return
      */
-    public static void newInstance(String url, FloatingActionButton button, BaseFragment baseFragment) {
+    public static void newInstance(String url, FloatingActionButton button, final BaseFragment baseFragment) {
         baseFragment.url = url;
         baseFragment.backToTop = button;
-
-        baseFragment.mResults = new ArrayList<>();
-        baseFragment.page = 1;
 
         //如果新建的对象是FuliFragment，就用FuliFragment特有的FuliAdapter
         if (baseFragment instanceof FuliFragment) {
             baseFragment.mAdapter = new FuliAdapter(baseFragment.mResults);
+            baseFragment.mAdapter.setLoadMore(new BaseAdapter.LoadMore() {
+                @Override
+                public void loadMore() {
+                    baseFragment.page++;
+                    baseFragment.load();
+                }
+            });
         } else {//否则就用其他Fragment都通用的AllAdapter
             baseFragment.mAdapter = new AllAdapter(baseFragment.mResults);
+            baseFragment.mAdapter.setLoadMore(new BaseAdapter.LoadMore() {
+                @Override
+                public void loadMore() {
+                    baseFragment.page++;
+                    baseFragment.load();
+                }
+            });
         }
     }
 
@@ -258,5 +269,4 @@ public class BaseFragment extends Fragment {
     protected void setSlidingLayout(SlidingLayout slidingLayout) {
         mSlidingLayout = slidingLayout;
     }
-
 }

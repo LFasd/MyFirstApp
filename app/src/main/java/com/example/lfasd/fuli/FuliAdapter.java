@@ -36,10 +36,11 @@ import okhttp3.Request;
  * Created by LFasd on 2017/6/2.
  */
 
-public class FuliAdapter extends RecyclerView.Adapter<FuliAdapter.MyHolder> {
+public class FuliAdapter extends BaseAdapter<FuliAdapter.MyHolder> {
 
     private List<Result> mResults = null;
     private Context mContext = null;
+//    private LoadMore mLoadMore;
 
     //每一个FuliItem都是一个CardView，里面包含了一个ImageView和一个TextView
     class MyHolder extends RecyclerView.ViewHolder {
@@ -135,6 +136,9 @@ public class FuliAdapter extends RecyclerView.Adapter<FuliAdapter.MyHolder> {
                                         dialog.dismiss();
                                         break;
                                     case 2:
+                                        if (getItemCount() < 8) {
+                                            loadMore();
+                                        }
                                         mResults.remove(position);
                                         notifyItemRemoved(position);
                                         dialog.dismiss();
@@ -146,8 +150,15 @@ public class FuliAdapter extends RecyclerView.Adapter<FuliAdapter.MyHolder> {
                 return true;
             }
         });
-
     }
+
+//    interface LoadMore {
+//        void loadMore();
+//    }
+//
+//    public void setLoadMore(LoadMore loadMore) {
+//        mLoadMore = loadMore;
+//    }
 
     private void saveImage(final int position) {
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {

@@ -23,7 +23,7 @@ import java.util.List;
  * Created by LFasd on 2017/6/5.
  */
 
-public class AllAdapter extends RecyclerView.Adapter<AllAdapter.MyHolder> {
+public class AllAdapter extends BaseAdapter<AllAdapter.MyHolder> {
 
     private List<Result> mResults;
     private Context mContext;
