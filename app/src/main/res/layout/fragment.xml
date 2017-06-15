@@ -6,7 +6,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fff"
     android:orientation="vertical">
 
     <lib.homhomlib.design.SlidingLayout
@@ -23,7 +22,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:background="#fff"/>
+            android:background="@color/white"/>
 
     </lib.homhomlib.design.SlidingLayout>
 

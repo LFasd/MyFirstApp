@@ -28,7 +28,7 @@
             android:layout_centerHorizontal="true"
             android:textSize="15sp"
             android:padding="10dp"
-            android:textColor="#fff"/>
+            android:textColor="@color/white"/>
 
     </RelativeLayout>
 </FrameLayout>

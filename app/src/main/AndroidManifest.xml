@@ -27,6 +27,9 @@
 
         <activity android:name=".SignActivity">
         </activity>
+
+        <activity android:name=".GirlActivity">
+        </activity>
     </application>
 
 </manifest>

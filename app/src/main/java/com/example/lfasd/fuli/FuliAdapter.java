@@ -38,13 +38,11 @@ public class FuliAdapter extends BaseAdapter<FuliAdapter.MyHolder> {
 
         private CardView mCardView;
         private ImageView mImageView;
-        private TextView mTextView;
 
         public MyHolder(View itemView) {
             super(itemView);
             mCardView = (CardView) itemView;
             mImageView = (ImageView) itemView.findViewById(R.id.girl);
-            mTextView = (TextView) itemView.findViewById(R.id.name);
         }
     }
 
@@ -69,7 +67,6 @@ public class FuliAdapter extends BaseAdapter<FuliAdapter.MyHolder> {
 
     @Override
     public void onBindViewHolder(final MyHolder holder, int position) {
-        holder.mTextView.setText(mResults.get(position).getWho());
         //使用 Glide 直接加载 url 对应的图片到 ImageView
         Glide.with(mContext).load(mResults.get(position).getUrl())
                 .into(holder.mImageView);
@@ -80,23 +77,9 @@ public class FuliAdapter extends BaseAdapter<FuliAdapter.MyHolder> {
         return mResults.size();
     }
 
-
-    /**
-     * 设置并显示对话框
-     *
-     * @param position 第几个 CardView
-     */
-    private void showDialog(int position) {
-
-        AlertDialog dialog = new AlertDialog.Builder(mContext).create();
-
-        new DialogSetter(mContext).setDialog(dialog, mResults.get(position));
-
-        dialog.show();
-    }
-
     /**
      * 为每个Item的点击事件和长按事件绑定监听器
+     *
      * @param holder
      */
     private void setListener(final MyHolder holder) {
@@ -105,7 +88,7 @@ public class FuliAdapter extends BaseAdapter<FuliAdapter.MyHolder> {
             @Override
             public void onClick(View v) {
                 int position = holder.getAdapterPosition();
-                showDialog(position);
+                GirlActivity.actionStart(mContext, mResults.get(position).getUrl());
             }
         });
 
@@ -132,7 +115,7 @@ public class FuliAdapter extends BaseAdapter<FuliAdapter.MyHolder> {
                                         break;
                                     case 2:
                                         //如果当前的总图片数小于7个，就加载下一页的数据
-                                        if (getItemCount() < 7) {
+                                        if (getItemCount() < 9) {
                                             loadMore();
                                         }
 
