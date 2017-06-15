@@ -1,10 +1,12 @@
 package com.example.lfasd.fuli;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -60,15 +62,7 @@ public class AllAdapter extends BaseAdapter<AllAdapter.MyHolder> {
 
         final MyHolder holder = new MyHolder(view);
 
-        holder.view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int position = holder.getAdapterPosition();
-                Log.d("test", position + "");
-
-                WebViewActivity.actionStart(mContext, mResults.get(position).getUrl());
-            }
-        });
+        setListener(holder);
 
         return holder;
     }
@@ -114,4 +108,52 @@ public class AllAdapter extends BaseAdapter<AllAdapter.MyHolder> {
     public int getItemCount() {
         return mResults.size();
     }
+
+    private void setListener(final MyHolder holder) {
+        holder.view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = holder.getAdapterPosition();
+                WebViewActivity.actionStart(mContext, mResults.get(position).getUrl());
+            }
+        });
+
+        holder.view.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                final int position = holder.getAdapterPosition();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                AlertDialog dialog = builder.create();
+
+                builder.setSingleChoiceItems(new String[]{"收藏", "分享", "不喜欢"}, -1
+                        , new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which) {
+                                    case 0:
+                                        break;
+                                    case 1:
+                                        break;
+                                    case 2:
+                                        if (getItemCount() < 7) {
+                                            loadMore();
+                                        }
+
+                                        deleteItem(mResults.get(position).get_id());
+                                        mResults.remove(position);
+                                        notifyItemRemoved(position);
+                                        notifyItemRangeChanged(position, 1);
+
+                                        dialog.dismiss();
+                                        break;
+                                }
+                            }
+                        }).show();
+
+                return true;
+            }
+        });
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.example.lfasd.fuli;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -22,9 +23,9 @@ public class FuliFragment extends BaseFragment {
 
     private RecyclerView mRecyclerView;
 
-    public static FuliFragment newInstance(FloatingActionButton button) {
+    public static FuliFragment newInstance(FloatingActionButton button, SharedPreferences sharedPreferences) {
         FuliFragment fuliFragment = new FuliFragment();
-        BaseFragment.newInstance(URL, button, fuliFragment);
+        BaseFragment.newInstance(URL, button, fuliFragment, sharedPreferences);
         return fuliFragment;
     }
 

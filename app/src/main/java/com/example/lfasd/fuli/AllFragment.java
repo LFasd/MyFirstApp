@@ -1,5 +1,6 @@
 package com.example.lfasd.fuli;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -13,9 +14,10 @@ import android.view.ViewGroup;
 
 public class AllFragment extends BaseFragment {
 
-    public static AllFragment newInstance(String url, FloatingActionButton button) {
+    public static AllFragment newInstance(String url, FloatingActionButton button
+            , SharedPreferences sharedPreferences) {
         AllFragment allFragment = new AllFragment();
-        BaseFragment.newInstance(url, button, allFragment);
+        BaseFragment.newInstance(url, button, allFragment, sharedPreferences);
         return allFragment;
     }
 

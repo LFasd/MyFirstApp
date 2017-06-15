@@ -1,5 +1,6 @@
 package com.example.lfasd.fuli;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -88,34 +89,46 @@ public class BaseFragment extends Fragment {
      */
     private RecyclerView recyclerView;
 
+    private SharedPreferences mSharedPreferences;
+
     private SlidingLayout mSlidingLayout;
+
+    private boolean isend = false;
 
     /**
      * @param url
      * @param button
      * @return
      */
-    public static void newInstance(String url, FloatingActionButton button, final BaseFragment baseFragment) {
+    public static void newInstance(String url, FloatingActionButton button
+            , final BaseFragment baseFragment, SharedPreferences sharedPreferences) {
         baseFragment.url = url;
         baseFragment.backToTop = button;
+        baseFragment.mSharedPreferences = sharedPreferences;
 
         //如果新建的对象是FuliFragment，就用FuliFragment特有的FuliAdapter
         if (baseFragment instanceof FuliFragment) {
             baseFragment.mAdapter = new FuliAdapter(baseFragment.mResults);
-            baseFragment.mAdapter.setLoadMore(new BaseAdapter.LoadMore() {
+
+            baseFragment.mAdapter.setLoadMoreListener(new BaseAdapter.OnLoadMoreListener() {
                 @Override
-                public void loadMore() {
-                    baseFragment.page++;
-                    baseFragment.load();
+                public void OnLoadMore() {
+                    if (!baseFragment.isend) {
+                        baseFragment.page++;
+                        baseFragment.load();
+                    }
                 }
             });
         } else {//否则就用其他Fragment都通用的AllAdapter
             baseFragment.mAdapter = new AllAdapter(baseFragment.mResults);
-            baseFragment.mAdapter.setLoadMore(new BaseAdapter.LoadMore() {
+
+            baseFragment.mAdapter.setLoadMoreListener(new BaseAdapter.OnLoadMoreListener() {
                 @Override
-                public void loadMore() {
-                    baseFragment.page++;
-                    baseFragment.load();
+                public void OnLoadMore() {
+                    if (!baseFragment.isend) {
+                        baseFragment.page++;
+                        baseFragment.load();
+                    }
                 }
             });
         }
@@ -167,7 +180,9 @@ public class BaseFragment extends Fragment {
                         if (mReturn.getResults().length > 0) {
                             //把数据模型添加到集合中
                             for (Result result : mReturn.getResults()) {
-                                mResults.add(result);
+                                if (mSharedPreferences.getString(result.get_id(), null) == null) {
+                                    mResults.add(result);
+                                }
                             }
                             Log.d("handler", "data_set_changed");
 
@@ -175,6 +190,7 @@ public class BaseFragment extends Fragment {
                             mHandler.sendEmptyMessage(DATA_SET_CHANGED);
                         } else {
                             Log.d("handler", "end");
+                            isend = true;
                             mHandler.sendEmptyMessage(END);
                         }
                         call.cancel();
@@ -214,8 +230,10 @@ public class BaseFragment extends Fragment {
 
                 //如果RecyclerView不能往下滚动，意味着到了底部，可以加载下一个资源的数据了
                 if (!recyclerView.canScrollVertically(1)) {
-                    page++;
-                    load();
+                    if (!isend) {
+                        page++;
+                        load();
+                    }
                 }
             } else {
                 isScrolling = true;
@@ -232,6 +250,12 @@ public class BaseFragment extends Fragment {
             switch (msg.what) {
                 case DATA_SET_CHANGED:
                     mAdapter.notifyDataSetChanged();
+                    if (mAdapter.getItemCount() < 6) {
+                        if (!isend) {
+                            page++;
+                            load();
+                        }
+                    }
                     break;
                 case END:
                     mSlidingLayout.setSlidingMode(SlidingLayout.SLIDING_MODE_BOTH);
@@ -253,7 +277,7 @@ public class BaseFragment extends Fragment {
         return mListener;
     }
 
-    protected RecyclerView.Adapter getAdapter() {
+    public BaseAdapter getAdapter() {
         return mAdapter;
     }
 

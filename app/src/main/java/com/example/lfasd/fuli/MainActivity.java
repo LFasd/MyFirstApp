@@ -88,7 +88,8 @@ public class MainActivity extends AppCompatActivity {
     private ImageView background;
     private TextView user_sign;
 
-    private SharedPreferences mSharedPreferences;
+    private SharedPreferences sign_SharedPreferences;
+    private SharedPreferences unlike_SharedPreferences;
 
     private Toolbar mToolbar;
 
@@ -167,8 +168,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        unlike_SharedPreferences = getSharedPreferences("unlike", Context.MODE_PRIVATE);
 
-        mFuliFragment = FuliFragment.newInstance(backToTop);
+        mFuliFragment = FuliFragment.newInstance(backToTop, unlike_SharedPreferences);
         init(mFuliFragment);
 
         mNavigationView.setCheckedItem(R.id.fuli);
@@ -190,49 +192,56 @@ public class MainActivity extends AppCompatActivity {
                             break;
                         case R.id.android:
                             if (mAndroidFragment == null) {
-                                mAndroidFragment = AllFragment.newInstance(ANDROID_URL, backToTop);
+                                mAndroidFragment = AllFragment.newInstance(ANDROID_URL
+                                        , backToTop, unlike_SharedPreferences);
                             }
                             switchFragment(isshow, mAndroidFragment);
                             mToolbar.setTitle("Android");
                             break;
                         case R.id.ios:
                             if (mIosFragment == null) {
-                                mIosFragment = AllFragment.newInstance(IOS_URL, backToTop);
+                                mIosFragment = AllFragment.newInstance(IOS_URL
+                                        , backToTop, unlike_SharedPreferences);
                             }
                             switchFragment(isshow, mIosFragment);
                             mToolbar.setTitle("ios");
                             break;
                         case R.id.relax:
                             if (mRelaxFragment == null) {
-                                mRelaxFragment = AllFragment.newInstance(RELAX_URL, backToTop);
+                                mRelaxFragment = AllFragment.newInstance(RELAX_URL
+                                        , backToTop, unlike_SharedPreferences);
                             }
                             switchFragment(isshow, mRelaxFragment);
                             mToolbar.setTitle("休息视频");
                             break;
                         case R.id.app:
                             if (mAppFragment == null) {
-                                mAppFragment = AllFragment.newInstance(APP_URL, backToTop);
+                                mAppFragment = AllFragment.newInstance(APP_URL
+                                        , backToTop, unlike_SharedPreferences);
                             }
                             switchFragment(isshow, mAppFragment);
                             mToolbar.setTitle("App");
                             break;
                         case R.id.expand:
                             if (mExpandFragment == null) {
-                                mExpandFragment = AllFragment.newInstance(EXPAND_URL, backToTop);
+                                mExpandFragment = AllFragment.newInstance(EXPAND_URL
+                                        , backToTop, unlike_SharedPreferences);
                             }
                             switchFragment(isshow, mExpandFragment);
                             mToolbar.setTitle("拓展资源");
                             break;
                         case R.id.other:
                             if (mOtherFragment == null) {
-                                mOtherFragment = AllFragment.newInstance(OTHER_URL, backToTop);
+                                mOtherFragment = AllFragment.newInstance(OTHER_URL
+                                        , backToTop, unlike_SharedPreferences);
                             }
                             switchFragment(isshow, mOtherFragment);
                             mToolbar.setTitle("瞎推荐");
                             break;
                         case R.id.fore:
                             if (mForeFragment == null) {
-                                mForeFragment = AllFragment.newInstance(FORE_URL, backToTop);
+                                mForeFragment = AllFragment.newInstance(FORE_URL
+                                        , backToTop, unlike_SharedPreferences);
                             }
                             switchFragment(isshow, mForeFragment);
                             mToolbar.setTitle("前端");
@@ -302,6 +311,13 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 //如果要显示的Fragment不在FragmentManager中，把它添加到FragmentManager中
                 transaction.hide(from).add(R.id.fragment, to).commit();
+
+                to.getAdapter().setOnDeleteListener(new BaseAdapter.OnDeleteListener() {
+                    @Override
+                    public void OnDelete(String id) {
+                        unlike_SharedPreferences.edit().putString(id, id).commit();
+                    }
+                });
             }
 
         }
@@ -314,6 +330,13 @@ public class MainActivity extends AppCompatActivity {
      */
     private void init(BaseFragment fragment) {
         backToTop.hide();
+
+        fragment.getAdapter().setOnDeleteListener(new BaseAdapter.OnDeleteListener() {
+            @Override
+            public void OnDelete(String id) {
+                unlike_SharedPreferences.edit().putString(id, id).commit();
+            }
+        });
 
         FragmentTransaction transaction = fm.beginTransaction();
         transaction.replace(R.id.fragment, fragment).show(fragment).commit();
@@ -404,7 +427,7 @@ public class MainActivity extends AppCompatActivity {
                 if (resultCode == Activity.RESULT_OK) {
                     String sign = data.getStringExtra("user_sign");
                     user_sign.setText(sign);
-                    SharedPreferences.Editor editor = mSharedPreferences.edit();
+                    SharedPreferences.Editor editor = sign_SharedPreferences.edit();
                     editor.putString("user_sign", sign);
                     editor.commit();
                 }
@@ -463,10 +486,10 @@ public class MainActivity extends AppCompatActivity {
      * 打开应用后初始化用户的个性签名
      */
     private void initUserSign() {
-        if (mSharedPreferences == null) {
-            mSharedPreferences = getPreferences(Context.MODE_PRIVATE);
+        if (sign_SharedPreferences == null) {
+            sign_SharedPreferences = getPreferences(Context.MODE_PRIVATE);
         }
-        String sign = mSharedPreferences.getString("user_sign", "点击修改个性签名");
+        String sign = sign_SharedPreferences.getString("user_sign", "点击修改个性签名");
         user_sign.setText(sign);
 
         //点击个性签名修改个性签名

@@ -2,15 +2,12 @@ package com.example.lfasd.fuli;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
+import android.content.SharedPreferences;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -23,14 +20,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 
 /**
  * Created by LFasd on 2017/6/2.
@@ -40,7 +32,6 @@ public class FuliAdapter extends BaseAdapter<FuliAdapter.MyHolder> {
 
     private List<Result> mResults = null;
     private Context mContext = null;
-//    private LoadMore mLoadMore;
 
     //每一个FuliItem都是一个CardView，里面包含了一个ImageView和一个TextView
     class MyHolder extends RecyclerView.ViewHolder {
@@ -104,6 +95,10 @@ public class FuliAdapter extends BaseAdapter<FuliAdapter.MyHolder> {
         dialog.show();
     }
 
+    /**
+     * 为每个Item的点击事件和长按事件绑定监听器
+     * @param holder
+     */
     private void setListener(final MyHolder holder) {
 
         holder.mCardView.setOnClickListener(new View.OnClickListener() {
@@ -136,11 +131,20 @@ public class FuliAdapter extends BaseAdapter<FuliAdapter.MyHolder> {
                                         dialog.dismiss();
                                         break;
                                     case 2:
-                                        if (getItemCount() < 8) {
+                                        //如果当前的总图片数小于7个，就加载下一页的数据
+                                        if (getItemCount() < 7) {
                                             loadMore();
                                         }
+
+                                        //先获取需要删除的Item的id
+                                        deleteItem(mResults.get(position).get_id());
+                                        //再将需要删除的Item所对应的对象移除
                                         mResults.remove(position);
+                                        //显示删除动画效果
                                         notifyItemRemoved(position);
+                                        //通知RecyclerView数据发生了修改
+                                        notifyItemRangeChanged(position, 1);
+
                                         dialog.dismiss();
                                         break;
                                 }
@@ -152,20 +156,18 @@ public class FuliAdapter extends BaseAdapter<FuliAdapter.MyHolder> {
         });
     }
 
-//    interface LoadMore {
-//        void loadMore();
-//    }
-//
-//    public void setLoadMore(LoadMore loadMore) {
-//        mLoadMore = loadMore;
-//    }
-
+    /**
+     * 使用输入输出流将图片储存到文件中
+     *
+     * @param position 图片对应的集合下标
+     */
     private void saveImage(final int position) {
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
+                        //使用url直接获取InputStream
                         URL url = new URL(mResults.get(position).getUrl());
                         InputStream is = url.openStream();
 

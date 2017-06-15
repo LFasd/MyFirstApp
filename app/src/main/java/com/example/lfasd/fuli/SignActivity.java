@@ -66,9 +66,14 @@ public class SignActivity extends AppCompatActivity {
             case R.id.save:
                 String sign = mEditText.getText().toString();
 
+                //如果字数大于指定的字数限制
                 if (sign.length() > mEditText.getMaxCharacters()) {
                     mEditText.setError("字数过多");
+                } else if (sign.length() == 0) {
+                    //如果字数为0
+                    mEditText.setError("不能为空");
                 } else {
+                    //字数没有错误，才返回用户的修改结果
                     Intent intent = new Intent();
                     intent.putExtra("user_sign", mEditText.getText().toString());
                     setResult(Activity.RESULT_OK, intent);
