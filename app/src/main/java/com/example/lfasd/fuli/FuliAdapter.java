@@ -97,42 +97,91 @@ public class FuliAdapter extends BaseAdapter<FuliAdapter.MyHolder> {
             public boolean onLongClick(View v) {
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                AlertDialog dialog = builder.create();
+                final AlertDialog dialog = builder.create();
 
-                builder.setSingleChoiceItems(new String[]{"保存图片", "分享", "不喜欢"}
-                        , -1, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                int position = holder.getAdapterPosition();
+                View view = View.inflate(mContext, R.layout.fuli_select, null);
 
-                                switch (which) {
-                                    case 0:
-                                        saveImage(position);
-                                        dialog.dismiss();
-                                        break;
-                                    case 1:
-                                        dialog.dismiss();
-                                        break;
-                                    case 2:
-                                        //如果当前的总图片数小于7个，就加载下一页的数据
-                                        if (getItemCount() < 9) {
-                                            loadMore();
-                                        }
+                TextView save = (TextView) view.findViewById(R.id.save);
+                TextView share = (TextView) view.findViewById(R.id.share);
+                TextView unlike = (TextView) view.findViewById(R.id.unlike);
 
-                                        //先获取需要删除的Item的id
-                                        deleteItem(mResults.get(position).get_id());
-                                        //再将需要删除的Item所对应的对象移除
-                                        mResults.remove(position);
-                                        //显示删除动画效果
-                                        notifyItemRemoved(position);
-                                        //通知RecyclerView数据发生了修改
-                                        notifyItemRangeChanged(position, 1);
+                final int position = holder.getAdapterPosition();
 
-                                        dialog.dismiss();
-                                        break;
-                                }
-                            }
-                        }).show();
+                save.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (MainActivity.checkPermission(mContext)) {
+                            saveImage(position);
+                        }
+                        dialog.dismiss();
+                    }
+                });
+
+                share.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                unlike.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //如果当前的总图片数小于7个，就加载下一页的数据
+                        if (getItemCount() < 9) {
+                            loadMore();
+                        }
+
+                        //先获取需要删除的Item的id
+                        deleteItem(mResults.get(position).get_id());
+                        //再将需要删除的Item所对应的对象移除
+                        mResults.remove(position);
+                        //显示删除动画效果
+                        notifyItemRemoved(position);
+                        //通知RecyclerView数据发生了修改
+                        notifyItemRangeChanged(position, 1);
+
+                        dialog.dismiss();
+                    }
+                });
+
+                dialog.setView(view);
+                dialog.show();
+
+//                builder.setSingleChoiceItems(new String[]{"保存图片", "分享（未实现）", "不喜欢"}
+//                        , -1, new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                int position = holder.getAdapterPosition();
+//
+//                                switch (which) {
+//                                    case 0:
+//                                        saveImage(position);
+//                                        dialog.dismiss();
+//                                        break;
+//                                    case 1:
+//                                        dialog.dismiss();
+//                                        break;
+//                                    case 2:
+//                                        //如果当前的总图片数小于7个，就加载下一页的数据
+//                                        if (getItemCount() < 9) {
+//                                            loadMore();
+//                                        }
+//
+//                                        //先获取需要删除的Item的id
+//                                        deleteItem(mResults.get(position).get_id());
+//                                        //再将需要删除的Item所对应的对象移除
+//                                        mResults.remove(position);
+//                                        //显示删除动画效果
+//                                        notifyItemRemoved(position);
+//                                        //通知RecyclerView数据发生了修改
+//                                        notifyItemRangeChanged(position, 1);
+//
+//                                        dialog.dismiss();
+//                                        break;
+//                                }
+//                            }
+//                        }).show();
 
                 return true;
             }

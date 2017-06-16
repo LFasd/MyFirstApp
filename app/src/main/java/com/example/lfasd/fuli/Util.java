@@ -1,9 +1,15 @@
 package com.example.lfasd.fuli;
 
 
+import android.util.Log;
+
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.List;
 
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -44,7 +50,12 @@ public class Util {
 
         try {
             String responseData = response.body().string();
+            Log.d("test", responseData);
+
             mReturn = gson.fromJson(responseData, Return.class);
+
+            gson.fromJson(responseData, new TypeToken<Return>() {}.getType());
+
         } catch (IOException e) {
             e.printStackTrace();
         }

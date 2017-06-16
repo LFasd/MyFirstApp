@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
@@ -42,6 +43,8 @@ public class WebViewActivity extends AppCompatActivity {
         setContentView(R.layout.webview_activity);
 
         url = getIntent().getStringExtra("url");
+
+        Log.d("url", url);
 
         mWebView = (WebView) findViewById(R.id.web_view);
         mWebView.getSettings().setJavaScriptEnabled(true);
@@ -107,6 +110,7 @@ public class WebViewActivity extends AppCompatActivity {
     protected void onDestroy() {
         mProgressDialog.dismiss();
         mWebView.clearHistory();
+        mWebView.destroy();
         super.onDestroy();
     }
 }

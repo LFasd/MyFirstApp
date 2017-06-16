@@ -18,6 +18,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import java.util.List;
 
@@ -86,11 +89,13 @@ public class AllAdapter extends BaseAdapter<AllAdapter.MyHolder> {
                     .error(R.mipmap.ic_action_warning)
                     .thumbnail(0.2f)
                     .into(holder.mImageView);
+            holder.mImageView.setVisibility(View.VISIBLE);
         } else {
             //如果没有图片，就使用默认的图标
-            Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources()
-                    , R.mipmap.ic_action_warning);
-            holder.mImageView.setImageBitmap(bitmap);
+//            Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources()
+//                    , R.mipmap.ic_action_warning);
+//            holder.mImageView.setImageBitmap(bitmap);
+            holder.mImageView.setVisibility(View.GONE);
         }
 
         //设置作者
@@ -126,8 +131,8 @@ public class AllAdapter extends BaseAdapter<AllAdapter.MyHolder> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
                 AlertDialog dialog = builder.create();
 
-                builder.setSingleChoiceItems(new String[]{"收藏", "分享", "不喜欢"}, -1
-                        , new DialogInterface.OnClickListener() {
+                builder.setSingleChoiceItems(new String[]{"收藏（未实现）", "分享（未实现）", "不喜欢"}
+                        , -1, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 switch (which) {
