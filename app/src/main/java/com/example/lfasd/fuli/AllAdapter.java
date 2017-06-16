@@ -2,13 +2,8 @@ package com.example.lfasd.fuli;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,9 +13,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 
 import java.util.List;
 
@@ -91,10 +83,6 @@ public class AllAdapter extends BaseAdapter<AllAdapter.MyHolder> {
                     .into(holder.mImageView);
             holder.mImageView.setVisibility(View.VISIBLE);
         } else {
-            //如果没有图片，就使用默认的图标
-//            Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources()
-//                    , R.mipmap.ic_action_warning);
-//            holder.mImageView.setImageBitmap(bitmap);
             holder.mImageView.setVisibility(View.GONE);
         }
 
@@ -115,6 +103,7 @@ public class AllAdapter extends BaseAdapter<AllAdapter.MyHolder> {
     }
 
     private void setListener(final MyHolder holder) {
+
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,35 +115,59 @@ public class AllAdapter extends BaseAdapter<AllAdapter.MyHolder> {
         holder.view.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                final int position = holder.getAdapterPosition();
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                AlertDialog dialog = builder.create();
+                final AlertDialog dialog = builder.create();
 
-                builder.setSingleChoiceItems(new String[]{"收藏（未实现）", "分享（未实现）", "不喜欢"}
-                        , -1, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                switch (which) {
-                                    case 0:
-                                        break;
-                                    case 1:
-                                        break;
-                                    case 2:
-                                        if (getItemCount() < 7) {
-                                            loadMore();
-                                        }
+                View view = View.inflate(mContext, R.layout.select_dialog, null);
 
-                                        deleteItem(mResults.get(position).get_id());
-                                        mResults.remove(position);
-                                        notifyItemRemoved(position);
-                                        notifyItemRangeChanged(position, 1);
+                TextView like = (TextView) view.findViewById(R.id.text1);
+                TextView share = (TextView) view.findViewById(R.id.text2);
+                TextView unlike = (TextView) view.findViewById(R.id.text3);
 
-                                        dialog.dismiss();
-                                        break;
-                                }
-                            }
-                        }).show();
+                like.setText("收藏");
+                share.setText("分享");
+                unlike.setText("不喜欢");
+
+                final int position = holder.getAdapterPosition();
+
+                like.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                share.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                unlike.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //如果当前的总Item数小于7个，就加载下一页的数据
+                        if (getItemCount() < 7) {
+                            loadMore();
+                        }
+
+                        //先获取需要删除的Item的id
+                        deleteItem(mResults.get(position).get_id());
+                        //再将需要删除的Item所对应的对象移除
+                        mResults.remove(position);
+                        //显示删除动画效果
+                        notifyItemRemoved(position);
+                        //通知RecyclerView数据发生了修改
+                        notifyItemRangeChanged(position, 1);
+
+                        dialog.dismiss();
+                    }
+                });
+
+                dialog.setView(view);
+                dialog.show();
 
                 return true;
             }

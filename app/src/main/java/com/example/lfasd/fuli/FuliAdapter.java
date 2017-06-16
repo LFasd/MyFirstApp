@@ -1,8 +1,6 @@
 package com.example.lfasd.fuli;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
@@ -99,11 +97,15 @@ public class FuliAdapter extends BaseAdapter<FuliAdapter.MyHolder> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
                 final AlertDialog dialog = builder.create();
 
-                View view = View.inflate(mContext, R.layout.fuli_select, null);
+                View view = View.inflate(mContext, R.layout.select_dialog, null);
 
-                TextView save = (TextView) view.findViewById(R.id.save);
-                TextView share = (TextView) view.findViewById(R.id.share);
-                TextView unlike = (TextView) view.findViewById(R.id.unlike);
+                TextView save = (TextView) view.findViewById(R.id.text1);
+                TextView share = (TextView) view.findViewById(R.id.text2);
+                TextView unlike = (TextView) view.findViewById(R.id.text3);
+
+                save.setText("保存图片");
+                share.setText("分享图片");
+                unlike.setText("不喜欢");
 
                 final int position = holder.getAdapterPosition();
 
@@ -147,41 +149,6 @@ public class FuliAdapter extends BaseAdapter<FuliAdapter.MyHolder> {
 
                 dialog.setView(view);
                 dialog.show();
-
-//                builder.setSingleChoiceItems(new String[]{"保存图片", "分享（未实现）", "不喜欢"}
-//                        , -1, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                int position = holder.getAdapterPosition();
-//
-//                                switch (which) {
-//                                    case 0:
-//                                        saveImage(position);
-//                                        dialog.dismiss();
-//                                        break;
-//                                    case 1:
-//                                        dialog.dismiss();
-//                                        break;
-//                                    case 2:
-//                                        //如果当前的总图片数小于7个，就加载下一页的数据
-//                                        if (getItemCount() < 9) {
-//                                            loadMore();
-//                                        }
-//
-//                                        //先获取需要删除的Item的id
-//                                        deleteItem(mResults.get(position).get_id());
-//                                        //再将需要删除的Item所对应的对象移除
-//                                        mResults.remove(position);
-//                                        //显示删除动画效果
-//                                        notifyItemRemoved(position);
-//                                        //通知RecyclerView数据发生了修改
-//                                        notifyItemRangeChanged(position, 1);
-//
-//                                        dialog.dismiss();
-//                                        break;
-//                                }
-//                            }
-//                        }).show();
 
                 return true;
             }

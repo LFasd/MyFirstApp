@@ -2,7 +2,6 @@ package com.example.lfasd.fuli;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
@@ -10,9 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageView;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 
@@ -63,7 +59,7 @@ public class SignActivity extends AppCompatActivity {
             case android.R.id.home:
                 finish();
                 break;
-            case R.id.save:
+            case R.id.text1:
                 String sign = mEditText.getText().toString();
 
                 //如果字数大于指定的字数限制

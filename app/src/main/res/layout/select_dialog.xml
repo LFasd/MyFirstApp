@@ -5,13 +5,12 @@
               android:orientation="vertical">
 
     <TextView
-        android:id="@+id/save"
+        android:id="@+id/text1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:text="保存图片"
         android:textColor="#000"
-        android:textSize="18sp"/>
+        android:textSize="16sp"/>
 
     <View
         android:layout_width="match_parent"
@@ -21,13 +20,12 @@
         android:background="#cecece"/>
 
     <TextView
-        android:id="@+id/share"
+        android:id="@+id/text2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:text="分享图片"
         android:textColor="#000"
-        android:textSize="18sp"/>
+        android:textSize="16sp"/>
 
     <View
         android:layout_width="match_parent"
@@ -37,12 +35,11 @@
         android:background="#cecece"/>
 
     <TextView
-        android:id="@+id/unlike"
+        android:id="@+id/text3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:text="不喜欢"
         android:textColor="#000"
-        android:textSize="18sp"/>
+        android:textSize="16sp"/>
 
 </LinearLayout>
