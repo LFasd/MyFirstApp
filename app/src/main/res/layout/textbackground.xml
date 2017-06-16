@@ -15,7 +15,7 @@
         android:padding="30dp"
         android:text="本项目由 LF 开发"
         android:textColor="#8c8c8e"
-        android:textSize="15sp"/>
+        android:textSize="@dimen/normal_text_size"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -25,7 +25,7 @@
         android:text="这都被你找到了"
 
         android:textColor="#8c8c8e"
-        android:textSize="15sp"/>
+        android:textSize="@dimen/normal_text_size"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -35,7 +35,7 @@
         android:padding="30dp"
         android:text="再怎么拉也没有了"
         android:textColor="#8c8c8e"
-        android:textSize="15sp"/>
+        android:textSize="@dimen/normal_text_size"/>
 
 
 </RelativeLayout>

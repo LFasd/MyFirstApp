@@ -8,38 +8,38 @@
         android:id="@+id/text1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:textColor="#000"
-        android:textSize="16sp"/>
+        android:padding="@dimen/normal_text_padding"
+        android:textColor="@color/black"
+        android:textSize="@dimen/normal_text_size"/>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:background="#cecece"/>
+        android:layout_marginLeft="@dimen/normal_line_margin"
+        android:layout_marginRight="@dimen/normal_line_margin"
+        android:background="@color/lineBackground"/>
 
     <TextView
         android:id="@+id/text2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:textColor="#000"
-        android:textSize="16sp"/>
+        android:padding="@dimen/normal_text_padding"
+        android:textColor="@color/black"
+        android:textSize="@dimen/normal_text_size"/>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:background="#cecece"/>
+        android:layout_marginLeft="@dimen/normal_line_margin"
+        android:layout_marginRight="@dimen/normal_line_margin"
+        android:background="@color/lineBackground"/>
 
     <TextView
         android:id="@+id/text3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:textColor="#000"
-        android:textSize="16sp"/>
+        android:padding="@dimen/normal_text_padding"
+        android:textColor="@color/black"
+        android:textSize="@dimen/normal_text_size"/>
 
 </LinearLayout>

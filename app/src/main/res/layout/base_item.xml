@@ -20,19 +20,19 @@
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
+            android:layout_marginLeft="@dimen/normal_text_padding"
             android:layout_toRightOf="@+id/icon"
             android:ellipsize="end"
             android:maxLines="2"
-            android:textColor="#000"
-            android:textSize="16sp"/>
+            android:textColor="@color/black"
+            android:textSize="@dimen/normal_text_size"/>
 
         <TextView
             android:id="@+id/author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginLeft="16dp"
+            android:layout_marginLeft="@dimen/normal_text_padding"
             android:layout_toRightOf="@+id/icon"
             android:maxLines="1"
             android:paddingTop="56dp"
@@ -55,6 +55,6 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_alignParentBottom="true"
-        android:background="#cecece"/>
+        android:background="@color/lineBackground"/>
 
 </RelativeLayout>
