@@ -329,7 +329,7 @@ public class MainActivity extends AppCompatActivity {
      * @param fragment 需要一开始显示的Fragment
      */
     private void init(BaseFragment fragment) {
-        backToTop.hide();
+//        backToTop.hide();
 
         fragment.getAdapter().setOnDeleteListener(new BaseAdapter.OnDeleteListener() {
             @Override

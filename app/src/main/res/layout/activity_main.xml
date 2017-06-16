@@ -38,7 +38,8 @@
             android:layout_gravity="right|bottom"
             android:layout_marginBottom="56dp"
             android:layout_marginRight="16dp"
-            android:src="@mipmap/ic_action_arrow_top"/>
+            android:src="@mipmap/ic_action_arrow_top"
+            app:layout_behavior="com.example.lfasd.fuli.ScrollAwareFABBehavior"/>
 
     </android.support.design.widget.CoordinatorLayout>
 

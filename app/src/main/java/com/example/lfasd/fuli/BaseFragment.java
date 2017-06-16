@@ -262,15 +262,15 @@ public class BaseFragment extends Fragment {
                 case END:
                     mSlidingLayout.setSlidingMode(SlidingLayout.SLIDING_MODE_BOTH);
                     break;
-                case BUTTON_STATE_CHANGED:
-                    //如果正在滚动，把FloatingActionButton显示出来
-                    if (isScrolling) {
-                        backToTop.show();
-                    } else {
-                        //否则把FloatActionButton隐藏
-                        backToTop.hide();
-                    }
-                    break;
+//                case BUTTON_STATE_CHANGED:
+//                    //如果正在滚动，把FloatingActionButton显示出来
+//                    if (isScrolling) {
+//                        backToTop.show();
+//                    } else {
+//                        //否则把FloatActionButton隐藏
+//                        backToTop.hide();
+//                    }
+//                    break;
             }
         }
     };
