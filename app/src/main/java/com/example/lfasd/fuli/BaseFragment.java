@@ -16,6 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.gson.reflect.TypeToken;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -175,9 +177,9 @@ public class BaseFragment extends Fragment {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         //加载后台数据成功，就解析后台返回的数据
-                        Return mReturn = Util.resolveJSON(response);
+                        Return mReturn = Util.resolveJSON(response, Return.class);
 
-                        if (mReturn.getResults().length > 0) {
+                        if (mReturn != null && mReturn.getResults().length > 0) {
                             //把数据模型添加到集合中
                             for (Result result : mReturn.getResults()) {
                                 if (mSharedPreferences.getString(result.get_id(), null) == null) {
