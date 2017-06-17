@@ -1,10 +1,12 @@
 package com.example.lfasd.fuli;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -20,7 +25,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by LFasd on 2017/6/2.
@@ -30,6 +37,7 @@ public class FuliAdapter extends BaseAdapter<FuliAdapter.MyHolder> {
 
     private List<Result> mResults = null;
     private Context mContext = null;
+    private Map<Integer, Integer> mHeights = new HashMap<>();
 
     //每一个FuliItem都是一个CardView，里面包含了一个ImageView和一个TextView
     class MyHolder extends RecyclerView.ViewHolder {
@@ -64,10 +72,61 @@ public class FuliAdapter extends BaseAdapter<FuliAdapter.MyHolder> {
     }
 
     @Override
-    public void onBindViewHolder(final MyHolder holder, int position) {
-        //使用 Glide 直接加载 url 对应的图片到 ImageView
-        Glide.with(mContext).load(mResults.get(position).getUrl())
-                .into(holder.mImageView);
+    public void onBindViewHolder(final MyHolder holder, final int position) {
+//        final ImageView imageView = holder.mImageView;
+        final ViewGroup.LayoutParams params = holder.mImageView.getLayoutParams();
+
+        String url = mResults.get(position).getUrl();
+
+        if(getItemCount() - position == 1){
+            loadMore();
+        }
+
+
+        Integer height = mHeights.get(position);
+
+        if (height != null) {
+            params.height = height;
+            holder.mImageView.setLayoutParams(params);
+
+            //使用 Glide 直接加载 url 对应的图片到 ImageView
+            Glide.with(mContext).load(url)
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .fitCenter()
+                    .into(holder.mImageView);
+
+        } else {
+            //使用 Glide 直接加载 url 对应的图片到 ImageView
+            Glide.with(mContext).load(url)
+                    .asBitmap()
+                    .into(new SimpleTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+
+//                            int width = imageView.getWidth();
+//                            if (width != 0) {
+                                params.height = (int) (1.0 * resource.getHeight() / resource.getWidth() * 498);
+//                            }
+
+                            mHeights.put(position, params.height);
+
+//                            int height = imageView.getHeight();
+
+//                            Log.d("position:", "" + position);
+//                            Log.d("params_height:", "" + params.height);
+//                            Log.d("params_width:", "" + params.width);
+//
+//                            Log.d("bitmap_height:", "" + resource.getHeight());
+//                            Log.d("bitmap_width:", "" + resource.getWidth());
+//
+//                            Log.d("imageView_height:", "" + height);
+//                            Log.d("imageView_width:", "" + width);
+
+                            holder.mImageView.setLayoutParams(params);
+                            holder.mImageView.setImageBitmap(resource);
+                        }
+                    });
+        }
     }
 
     @Override

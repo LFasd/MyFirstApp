@@ -97,6 +97,8 @@ public class BaseFragment extends Fragment {
 
     private boolean isend = false;
 
+    private int oldcount;
+
     /**
      * @param url
      * @param button
@@ -179,6 +181,8 @@ public class BaseFragment extends Fragment {
                         //加载后台数据成功，就解析后台返回的数据
                         Return mReturn = Util.resolveJSON(response, Return.class);
 
+                        oldcount = mResults.size();
+
                         if (mReturn != null && mReturn.getResults().length > 0) {
                             //把数据模型添加到集合中
                             for (Result result : mReturn.getResults()) {
@@ -216,19 +220,19 @@ public class BaseFragment extends Fragment {
             if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                 isScrolling = false;
 
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep(BUTTON_WAIT);
-
-                            //通知可能需要改变FloatingActionButton的显示状态
-                            mHandler.sendEmptyMessage(BUTTON_STATE_CHANGED);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        try {
+//                            Thread.sleep(BUTTON_WAIT);
+//
+//                            //通知可能需要改变FloatingActionButton的显示状态
+//                            mHandler.sendEmptyMessage(BUTTON_STATE_CHANGED);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }).start();
 
                 //如果RecyclerView不能往下滚动，意味着到了底部，可以加载下一个资源的数据了
                 if (!recyclerView.canScrollVertically(1)) {
@@ -240,7 +244,7 @@ public class BaseFragment extends Fragment {
             } else {
                 isScrolling = true;
                 Log.d("handler", "button_state_changed");
-                mHandler.sendEmptyMessage(BUTTON_STATE_CHANGED);
+//                mHandler.sendEmptyMessage(BUTTON_STATE_CHANGED);
             }
         }
     };
@@ -251,11 +255,12 @@ public class BaseFragment extends Fragment {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case DATA_SET_CHANGED:
-                    mAdapter.notifyDataSetChanged();
+//                    mAdapter.notifyDataSetChanged();
+                    mAdapter.notifyItemRangeInserted(oldcount,mResults.size() - oldcount);
                     if (mAdapter.getItemCount() < 6) {
                         if (!isend) {
-                            page++;
-                            load();
+//                            page++;
+//                            load();
                         }
                     }
                     break;
