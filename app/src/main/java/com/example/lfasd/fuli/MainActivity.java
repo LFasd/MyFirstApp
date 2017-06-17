@@ -513,6 +513,11 @@ public class MainActivity extends AppCompatActivity {
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .centerCrop()
                     .into(background);
+        }else{
+            //否则就使用我拍的一张照片作为背景墙
+            Glide.with(this).load(R.drawable.sunset)
+                    .centerCrop()
+                    .into(background);
         }
 
         //为背景墙绑定事件监听器，用户点击后打开相册选择图片

@@ -234,13 +234,13 @@ public class BaseFragment extends Fragment {
 //                    }
 //                }).start();
 
-                //如果RecyclerView不能往下滚动，意味着到了底部，可以加载下一个资源的数据了
-                if (!recyclerView.canScrollVertically(1)) {
-                    if (!isend) {
-                        page++;
-                        load();
-                    }
-                }
+//                //如果RecyclerView不能往下滚动，意味着到了底部，可以加载下一个资源的数据了
+//                if (!recyclerView.canScrollVertically(1)) {
+//                    if (!isend) {
+//                        page++;
+//                        load();
+//                    }
+//                }
             } else {
                 isScrolling = true;
                 Log.d("handler", "button_state_changed");
@@ -256,11 +256,12 @@ public class BaseFragment extends Fragment {
             switch (msg.what) {
                 case DATA_SET_CHANGED:
 //                    mAdapter.notifyDataSetChanged();
-                    mAdapter.notifyItemRangeInserted(oldcount,mResults.size() - oldcount);
+//                    mAdapter.notifyItemRangeInserted(oldcount,mResults.size() - oldcount);
+                    mAdapter.notifyItemRangeChanged(oldcount, mResults.size() - oldcount);
                     if (mAdapter.getItemCount() < 6) {
                         if (!isend) {
-//                            page++;
-//                            load();
+                            page++;
+                            load();
                         }
                     }
                     break;

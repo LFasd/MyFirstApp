@@ -78,7 +78,7 @@ public class FuliAdapter extends BaseAdapter<FuliAdapter.MyHolder> {
 
         String url = mResults.get(position).getUrl();
 
-        if(getItemCount() - position == 1){
+        if(getItemCount() - position == 2){
             loadMore();
         }
 
@@ -89,11 +89,6 @@ public class FuliAdapter extends BaseAdapter<FuliAdapter.MyHolder> {
             params.height = height;
             holder.mImageView.setLayoutParams(params);
 
-            //使用 Glide 直接加载 url 对应的图片到 ImageView
-            Glide.with(mContext).load(url)
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .fitCenter()
-                    .into(holder.mImageView);
 
         } else {
             //使用 Glide 直接加载 url 对应的图片到 ImageView
@@ -110,23 +105,18 @@ public class FuliAdapter extends BaseAdapter<FuliAdapter.MyHolder> {
 
                             mHeights.put(position, params.height);
 
-//                            int height = imageView.getHeight();
-
-//                            Log.d("position:", "" + position);
-//                            Log.d("params_height:", "" + params.height);
-//                            Log.d("params_width:", "" + params.width);
-//
-//                            Log.d("bitmap_height:", "" + resource.getHeight());
-//                            Log.d("bitmap_width:", "" + resource.getWidth());
-//
-//                            Log.d("imageView_height:", "" + height);
-//                            Log.d("imageView_width:", "" + width);
-
                             holder.mImageView.setLayoutParams(params);
-                            holder.mImageView.setImageBitmap(resource);
+//                            holder.mImageView.setImageBitmap(resource);
                         }
                     });
         }
+
+
+        //使用 Glide 直接加载 url 对应的图片到 ImageView
+        Glide.with(mContext).load(url)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .fitCenter()
+                .into(holder.mImageView);
     }
 
     @Override
