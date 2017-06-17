@@ -6,7 +6,6 @@ import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,7 +77,7 @@ public class FuliAdapter extends BaseAdapter<FuliAdapter.MyHolder> {
 
         String url = mResults.get(position).getUrl();
 
-        if(getItemCount() - position == 2){
+        if (getItemCount() - position == 2) {
             loadMore();
         }
 
@@ -88,25 +87,27 @@ public class FuliAdapter extends BaseAdapter<FuliAdapter.MyHolder> {
         if (height != null) {
             params.height = height;
             holder.mImageView.setLayoutParams(params);
-
-
         } else {
-            //使用 Glide 直接加载 url 对应的图片到 ImageView
+            //使用Glide加载出Bitmap，并根据Bitmap的宽高，设置ImageView的宽高
+            // 并将高度存进Map中，下次加载图片的时候能够直接根据position获取高度
             Glide.with(mContext).load(url)
                     .asBitmap()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
                     .into(new SimpleTarget<Bitmap>() {
                         @Override
                         public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
 
-//                            int width = imageView.getWidth();
-//                            if (width != 0) {
+                            int width = holder.mImageView.getWidth();
+                            if (width != 0) {
+                                params.height = (int) (1.0 * resource.getHeight() / resource.getWidth() * width);
+                            }else{
+                                //这个498是在我手机上的ImageView的实际宽度
                                 params.height = (int) (1.0 * resource.getHeight() / resource.getWidth() * 498);
-//                            }
+                            }
 
                             mHeights.put(position, params.height);
-
                             holder.mImageView.setLayoutParams(params);
-//                            holder.mImageView.setImageBitmap(resource);
                         }
                     });
         }

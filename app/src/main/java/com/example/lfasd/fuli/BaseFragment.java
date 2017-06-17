@@ -234,13 +234,13 @@ public class BaseFragment extends Fragment {
 //                    }
 //                }).start();
 
-//                //如果RecyclerView不能往下滚动，意味着到了底部，可以加载下一个资源的数据了
-//                if (!recyclerView.canScrollVertically(1)) {
-//                    if (!isend) {
-//                        page++;
-//                        load();
-//                    }
-//                }
+                //如果RecyclerView不能往下滚动，意味着到了底部，可以加载下一个资源的数据了
+                if (!recyclerView.canScrollVertically(1) && !(mAdapter instanceof FuliAdapter)) {
+                    if (!isend) {
+                        page++;
+                        load();
+                    }
+                }
             } else {
                 isScrolling = true;
                 Log.d("handler", "button_state_changed");

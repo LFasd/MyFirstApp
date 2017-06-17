@@ -37,7 +37,7 @@ public class FuliFragment extends BaseFragment {
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.list);
 
-        //FuliFragment显示的效果是一行有两个CardView，使用网络布局管理器
+        //FuliFragment显示的效果是一行有两个CardView，使用瀑布流布局管理器
         mRecyclerView.setLayoutManager(
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         mRecyclerView.setAdapter(getAdapter());
