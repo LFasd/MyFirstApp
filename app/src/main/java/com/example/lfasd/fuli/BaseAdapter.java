@@ -52,14 +52,18 @@ public class BaseAdapter<T extends RecyclerView.ViewHolder> extends RecyclerView
      * @param id
      */
     protected void deleteItem(String id) {
-        mOnDeleteListener.OnDelete(id);
+        if(mOnDeleteListener != null) {
+            mOnDeleteListener.OnDelete(id);
+        }
     }
 
     /**
      * 触发剩余Item数量不够事件，回调方法
      */
     protected void loadMore() {
-        mLoadMoreListener.OnLoadMore();
+        if(mLoadMoreListener != null) {
+            mLoadMoreListener.OnLoadMore();
+        }
     }
 
     @Override
