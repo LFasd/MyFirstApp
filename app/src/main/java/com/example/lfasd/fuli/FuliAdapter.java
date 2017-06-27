@@ -1,5 +1,6 @@
 package com.example.lfasd.fuli;
 
+import android.Manifest;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Environment;
@@ -162,7 +163,8 @@ public class FuliAdapter extends BaseAdapter<FuliAdapter.MyHolder> {
                 save.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (MainActivity.checkPermission(mContext)) {
+                        if (MainActivity.checkPermission(mContext
+                                , Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                             saveImage(position);
                         }
                         dialog.dismiss();

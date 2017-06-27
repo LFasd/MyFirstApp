@@ -16,8 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.gson.reflect.TypeToken;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +34,7 @@ import okhttp3.Response;
  */
 public class BaseFragment extends Fragment {
 
+
     /**
      * 数据改变标识
      */
@@ -48,11 +47,15 @@ public class BaseFragment extends Fragment {
 
     /**
      * 按钮状态改变标识
+     *
+     * 旧的按钮动作，已废弃
      */
     public static final int BUTTON_STATE_CHANGED = 2;
 
     /**
      * 停止滚动后FloatingActionButton需要过多少毫秒后消失
+     *
+     * 旧的按钮动作，已废弃
      */
     public static final long BUTTON_WAIT = 800;
 
@@ -62,19 +65,21 @@ public class BaseFragment extends Fragment {
     private boolean isScrolling = false;
 
     /**
+     * 回滚到RecyclerView的浮动按钮
+     *
+     * 旧的按钮动作，已废弃
+     */
+    private FloatingActionButton backToTop;
+
+    /**
      * 现在已经加载过的url资源数
      */
-    private int page = 1;
+    private int page = 0;
 
     /**
      * 对应RecyclerView中每个Item的数据模型
      */
     private List<Result> mResults = new ArrayList<>();
-
-    /**
-     * 回滚到RecyclerView的浮动按钮
-     */
-    private FloatingActionButton backToTop;
 
     /**
      * 后台url
@@ -91,7 +96,7 @@ public class BaseFragment extends Fragment {
      */
     private RecyclerView recyclerView;
 
-    private SharedPreferences mSharedPreferences;
+    private SharedPreferences user_unlike;
 
     private SlidingLayout mSlidingLayout;
 
@@ -108,7 +113,7 @@ public class BaseFragment extends Fragment {
             , final BaseFragment baseFragment, SharedPreferences sharedPreferences) {
         baseFragment.url = url;
         baseFragment.backToTop = button;
-        baseFragment.mSharedPreferences = sharedPreferences;
+        baseFragment.user_unlike = sharedPreferences;
 
         //如果新建的对象是FuliFragment，就用FuliFragment特有的FuliAdapter
         if (baseFragment instanceof FuliFragment) {
@@ -118,7 +123,6 @@ public class BaseFragment extends Fragment {
                 @Override
                 public void OnLoadMore() {
                     if (!baseFragment.isend) {
-                        baseFragment.page++;
                         baseFragment.load();
                     }
                 }
@@ -130,7 +134,6 @@ public class BaseFragment extends Fragment {
                 @Override
                 public void OnLoadMore() {
                     if (!baseFragment.isend) {
-                        baseFragment.page++;
                         baseFragment.load();
                     }
                 }
@@ -161,6 +164,7 @@ public class BaseFragment extends Fragment {
      * 从url对应的后台加载数据，并把解析后的数据加载到模型集合中，然后通过Handler发送通知数据改变，刷新界面
      */
     protected void load() {
+        page++;
 
         //启动一条新的线程来进行网络连接
         new Thread(new Runnable() {
@@ -172,6 +176,8 @@ public class BaseFragment extends Fragment {
                         //当加载后台数据失败后，提示用户
                         Looper.prepare();
                         Toast.makeText(getActivity(), "无法加载数据，请确认网络连接", Toast.LENGTH_SHORT).show();
+                        //加载失败记得要将页数减一
+                        page--;
                         Looper.loop();
                         call.cancel();
                     }
@@ -186,7 +192,8 @@ public class BaseFragment extends Fragment {
                         if (mReturn != null && mReturn.getResults().length > 0) {
                             //把数据模型添加到集合中
                             for (Result result : mReturn.getResults()) {
-                                if (mSharedPreferences.getString(result.get_id(), null) == null) {
+                                //如果当前数据不是标记为用户不喜欢的，就添加进数据集合中
+                                if (user_unlike.getString(result.get_id(), null) == null) {
                                     mResults.add(result);
                                 }
                             }
@@ -220,6 +227,7 @@ public class BaseFragment extends Fragment {
             if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                 isScrolling = false;
 
+                //旧的按钮动作，已废弃
 //                new Thread(new Runnable() {
 //                    @Override
 //                    public void run() {
@@ -237,7 +245,6 @@ public class BaseFragment extends Fragment {
                 //如果RecyclerView不能往下滚动，意味着到了底部，可以加载下一个资源的数据了
                 if (!recyclerView.canScrollVertically(1) && !(mAdapter instanceof FuliAdapter)) {
                     if (!isend) {
-                        page++;
                         load();
                     }
                 }
@@ -260,14 +267,16 @@ public class BaseFragment extends Fragment {
                     mAdapter.notifyItemRangeChanged(oldcount, mResults.size() - oldcount);
                     if (mAdapter.getItemCount() < 6) {
                         if (!isend) {
-                            page++;
                             load();
                         }
                     }
                     break;
+
                 case END:
                     mSlidingLayout.setSlidingMode(SlidingLayout.SLIDING_MODE_BOTH);
                     break;
+
+                //旧的按钮动作，已废弃
 //                case BUTTON_STATE_CHANGED:
 //                    //如果正在滚动，把FloatingActionButton显示出来
 //                    if (isScrolling) {
@@ -300,5 +309,9 @@ public class BaseFragment extends Fragment {
 
     protected void setSlidingLayout(SlidingLayout slidingLayout) {
         mSlidingLayout = slidingLayout;
+    }
+
+    public int getCount(){
+        return mResults.size();
     }
 }

@@ -4,9 +4,11 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,6 +17,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -49,19 +52,24 @@ public class MainActivity extends AppCompatActivity {
     public static final int WRITE_EXTERNAL_STORAGE = 0;
 
     /**
+     * 申请监听网络状态变化权限的标识
+     */
+    public static final int ACCESS_NETWORK_STATE = 1;
+
+    /**
      * 修改用户头像标识
      */
-    public static final int CHANGE_USER_ICON = 1;
+    public static final int CHANGE_USER_ICON = 2;
 
     /**
      * 修改背景图标标识
      */
-    public static final int CHANGE_USER_BACKGROUND = 2;
+    public static final int CHANGE_USER_BACKGROUND = 3;
 
     /**
      * 修改个性签名标识
      */
-    public static final int CHANGE_USER_SIGN = 3;
+    public static final int CHANGE_USER_SIGN = 4;
 
     /**
      * 在这么多时间间隔内连续按两下返回键就能退出应用程序
@@ -88,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView background;
     private TextView user_sign;
 
-    private SharedPreferences sign_SharedPreferences;
+    private SharedPreferences user_SharedPreferences;
     private SharedPreferences unlike_SharedPreferences;
 
     private Toolbar mToolbar;
@@ -144,21 +152,7 @@ public class MainActivity extends AppCompatActivity {
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
         backToTop = (FloatingActionButton) findViewById(R.id.back_to_top);
 
-        //这里有个坑
-        View nav_head = getLayoutInflater().inflate(R.layout.nav_head, null, false);
-
-        user_icon = (CircleImageView) nav_head.findViewById(R.id.user_picture);
-        initUser();
-
-        user_sign = (TextView) nav_head.findViewById(R.id.user_sign);
-        initUserSign();
-
-        background = (ImageView) nav_head.findViewById(R.id.background);
-        initBackground();
-
-        //为
-        mNavigationView.addHeaderView(nav_head);
-
+        initNavigationView();
 
         backToTop.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -170,8 +164,14 @@ public class MainActivity extends AppCompatActivity {
 
         unlike_SharedPreferences = getSharedPreferences("unlike", Context.MODE_PRIVATE);
 
-        mFuliFragment = FuliFragment.newInstance(backToTop, unlike_SharedPreferences);
-        init(mFuliFragment);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE)
+                != PackageManager.PERMISSION_GRANTED) {
+            checkPermission(this, Manifest.permission.ACCESS_NETWORK_STATE);
+        } else {
+            addReceiver();
+        }
+
+        initView();
 
         mNavigationView.setCheckedItem(R.id.fuli);
         //为NavigationView菜单的点击事件绑定监听器
@@ -260,12 +260,26 @@ public class MainActivity extends AppCompatActivity {
      * @param context 需要申请权限的上下文
      * @return 如果有权限直接返回true，没有权限，先申请权限并返回false
      */
-    public static boolean checkPermission(Context context) {
-        if (ActivityCompat.checkSelfPermission(context
-                , Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
+    public static boolean checkPermission(Context context, String permission) {
+
+        int mode;
+
+        switch (permission) {
+            case Manifest.permission.ACCESS_NETWORK_STATE:
+                mode = ACCESS_NETWORK_STATE;
+                break;
+            case Manifest.permission.WRITE_EXTERNAL_STORAGE:
+                mode = WRITE_EXTERNAL_STORAGE;
+                break;
+            default:
+                mode = -1;
+                break;
+        }
+
+        if (ActivityCompat.checkSelfPermission(context, permission)
+                != PackageManager.PERMISSION_GRANTED && mode != -1) {
             ActivityCompat.requestPermissions((Activity) context
-                    , new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE);
+                    , new String[]{permission}, mode);
             return false;
         }
         return true;
@@ -276,9 +290,17 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case WRITE_EXTERNAL_STORAGE:
+                if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "请给予必要权限", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case ACCESS_NETWORK_STATE:
                 //如果用户没有给予权限，就重复申请
                 if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "请给予必要权限", Toast.LENGTH_SHORT).show();
+                    checkPermission(MainActivity.this, Manifest.permission.ACCESS_NETWORK_STATE);
+                }else{
+                    addReceiver();
                 }
                 break;
         }
@@ -325,13 +347,12 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * 初始化界面，内容是一个Fragment
-     *
-     * @param fragment 需要一开始显示的Fragment
      */
-    private void init(BaseFragment fragment) {
+    private void initView() {
 //        backToTop.hide();
+        mFuliFragment = FuliFragment.newInstance(backToTop, unlike_SharedPreferences);
 
-        fragment.getAdapter().setOnDeleteListener(new BaseAdapter.OnDeleteListener() {
+        mFuliFragment.getAdapter().setOnDeleteListener(new BaseAdapter.OnDeleteListener() {
             @Override
             public void OnDelete(String id) {
                 unlike_SharedPreferences.edit().putString(id, id).commit();
@@ -339,9 +360,26 @@ public class MainActivity extends AppCompatActivity {
         });
 
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.replace(R.id.fragment, fragment).show(fragment).commit();
+        transaction.replace(R.id.fragment, mFuliFragment).show(mFuliFragment).commit();
 
-        isshow = fragment;
+        isshow = mFuliFragment;
+    }
+
+    private void initNavigationView() {
+        //这里有个坑
+        View nav_head = getLayoutInflater().inflate(R.layout.nav_head, null, false);
+
+        user_icon = (CircleImageView) nav_head.findViewById(R.id.user_picture);
+        initUser();
+
+        user_sign = (TextView) nav_head.findViewById(R.id.user_sign);
+        initUserSign();
+
+        background = (ImageView) nav_head.findViewById(R.id.background);
+        initBackground();
+
+        //为NavigationView动态添加头布局
+        mNavigationView.addHeaderView(nav_head);
     }
 
     @Override
@@ -399,7 +437,8 @@ public class MainActivity extends AppCompatActivity {
         user_icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkPermission(MainActivity.this)) {
+                if (checkPermission(MainActivity.this
+                        , Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     Intent intent = new Intent(Intent.ACTION_PICK);
                     intent.setType("image/*");
                     startActivityForResult(intent, CHANGE_USER_ICON);
@@ -427,7 +466,7 @@ public class MainActivity extends AppCompatActivity {
                 if (resultCode == Activity.RESULT_OK) {
                     String sign = data.getStringExtra("user_sign");
                     user_sign.setText(sign);
-                    SharedPreferences.Editor editor = sign_SharedPreferences.edit();
+                    SharedPreferences.Editor editor = user_SharedPreferences.edit();
                     editor.putString("user_sign", sign);
                     editor.commit();
                 }
@@ -486,10 +525,10 @@ public class MainActivity extends AppCompatActivity {
      * 打开应用后初始化用户的个性签名
      */
     private void initUserSign() {
-        if (sign_SharedPreferences == null) {
-            sign_SharedPreferences = getPreferences(Context.MODE_PRIVATE);
+        if (user_SharedPreferences == null) {
+            user_SharedPreferences = getPreferences(Context.MODE_PRIVATE);
         }
-        String sign = sign_SharedPreferences.getString("user_sign", "点击修改个性签名");
+        String sign = user_SharedPreferences.getString("user_sign", "点击修改个性签名");
         user_sign.setText(sign);
 
         //点击个性签名修改个性签名
@@ -513,7 +552,7 @@ public class MainActivity extends AppCompatActivity {
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .centerCrop()
                     .into(background);
-        }else{
+        } else {
             //否则就使用我拍的一张照片作为背景墙
             Glide.with(this).load(R.drawable.sunset)
                     .centerCrop()
@@ -524,12 +563,27 @@ public class MainActivity extends AppCompatActivity {
         background.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkPermission(MainActivity.this)) {
+                if (checkPermission(MainActivity.this
+                        , Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     Intent intent = new Intent(Intent.ACTION_PICK);
                     intent.setType("image/*");
                     startActivityForResult(intent, CHANGE_USER_BACKGROUND);
                 }
             }
         });
+    }
+
+    private void addReceiver() {
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        NetStatusReceiver receiver = new NetStatusReceiver();
+        receiver.setListener(new OnNetWorkChangeListener() {
+            @Override
+            public void onNetWorkChange() {
+                if (isshow != null && !isshow.getRecyclerView().canScrollVertically(1)) {
+                    isshow.load();
+                }
+            }
+        });
+        registerReceiver(receiver, filter);
     }
 }
